@@ -1,34 +1,36 @@
 <template>
-  <div class="datepicker">
-    <ui-datepicker
-      v-model="date"
-      :config="config"
-      placeholder="Select Date..."
-      outlined
-      toggle>
-    </ui-datepicker>
-  </div>
-  <ui-form type="|" action-align="center">
-    <template #default="{subitemClass, actionClass}">
-      <div class="match" v-for="match in matches">
-        <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
-        <span class="team">{{match.homeTeam}}</span>
-        <ui-form-field>
-          <ui-textfield class="score" @input="match.chosen = true" endAligned v-model="match.homeScore" outlined :disabled="match.disabled"></ui-textfield>
+  <div v-if="loggedIn">
+    <div class="datepicker">
+      <ui-datepicker
+        v-model="date"
+        :config="config"
+        placeholder="Select Date..."
+        outlined
+        toggle>
+      </ui-datepicker>
+    </div>
+    <ui-form type="|" action-align="center">
+      <template #default="{subitemClass, actionClass}">
+        <div class="match" v-for="match in matches">
+          <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
+          <span class="team">{{match.homeTeam}}</span>
+          <ui-form-field>
+            <ui-textfield class="score" @input="match.chosen = true" endAligned v-model="match.homeScore" outlined :disabled="match.disabled"></ui-textfield>
+          </ui-form-field>
+          -
+          <ui-form-field>
+            <ui-textfield class="score" @input="match.chosen = true" v-model="match.awayScore" outlined :disabled="match.disabled"></ui-textfield>
+          </ui-form-field> 
+          <span class="team">{{match.awayTeam}}</span>
+          <span>g. {{matchTime(match)}}</span>
+        </div>
+        <ui-form-field :class="actionClass">
+          <ui-button class="sendButton" @click.prevent="sendTyping" raised>Wyślij</ui-button>
         </ui-form-field>
-        -
-        <ui-form-field>
-          <ui-textfield class="score" @input="match.chosen = true" v-model="match.awayScore" outlined :disabled="match.disabled"></ui-textfield>
-        </ui-form-field> 
-        <span class="team">{{match.awayTeam}}</span>
-        <span>{{matchTime(match)}}</span>
-        <span>{{match.disabled == true}}</span>
-      </div>
-      <ui-form-field :class="actionClass">
-        <ui-button class="sendButton" @click.prevent="sendTyping" raised>Wyślij</ui-button>
-      </ui-form-field>
-    </template>
-  </ui-form>
+      </template>
+    </ui-form>
+  </div>
+  <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
   <ui-dialog v-model="sendTypingsModalOpened" @confirm="sendTyping">
     <ui-dialog-title>Wysyłane typowania</ui-dialog-title>
     <ui-dialog-content>
@@ -49,6 +51,9 @@
 
   export default {
     name: 'Matches',
+    components: {
+      BalmUI
+    },
     data() {
       return {
         matches:[],
@@ -67,6 +72,11 @@
           matches: [],
           userId: 0
         }
+      }
+    },
+    computed: {
+      loggedIn() {
+        return this.$store.state.auth.status.loggedIn;
       }
     },
     methods: {
@@ -92,7 +102,7 @@
       },
       sendTyping() {
         this.typings.matches = this.matches.filter((match) => match.chosen);
-        this.typings.userId = 1
+        this.typings.userId = this.$store.state.auth.user.id
         axios.post('http://localhost:8080/matches/typings', {
           "matches": this.typings.matches,
           "userId": this.typings.userId
@@ -115,12 +125,6 @@
       date() {
         this.getMatches()
       }
-    },
-    components: {
-      BalmUI
-    },
-    mounted() {
-      // this.getMatches()
     }
   }
 </script>
@@ -152,5 +156,11 @@
 
 .sendButton {
   margin-top: 20px;
+}
+
+.login-message {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 </style>
