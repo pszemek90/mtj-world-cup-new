@@ -50,13 +50,18 @@ export default {
     data() {
         return {
             type: 'standard',
-            title: 'Hello BalmUI',
             openDrawer: false
         };
     },
     computed: {
       loggedIn() {
         return this.$store.state.auth.status.loggedIn;
+      },
+      title() {
+        let currentUser = this.loggedIn 
+            ? this.$store.state.auth.user.username 
+            : 'nieznajomy'
+        return 'Witaj ' + currentUser;
       }
     },
     methods: {
