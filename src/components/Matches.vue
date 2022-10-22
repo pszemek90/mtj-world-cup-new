@@ -11,17 +11,18 @@
   <ui-form type="|" action-align="center">
     <template #default="{subitemClass, actionClass}">
       <div class="match" v-for="match in matches">
-        <ui-checkbox v-model="match.chosen"></ui-checkbox>
+        <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
         <span class="team">{{match.homeTeam}}</span>
         <ui-form-field>
-          <ui-textfield class="score" @input="match.chosen = true" endAligned v-model="match.homeScore" outlined></ui-textfield>
+          <ui-textfield class="score" @input="match.chosen = true" endAligned v-model="match.homeScore" outlined :disabled="match.disabled"></ui-textfield>
         </ui-form-field>
         -
         <ui-form-field>
-          <ui-textfield class="score" @input="match.chosen = true" v-model="match.awayScore" outlined></ui-textfield>
+          <ui-textfield class="score" @input="match.chosen = true" v-model="match.awayScore" outlined :disabled="match.disabled"></ui-textfield>
         </ui-form-field> 
         <span class="team">{{match.awayTeam}}</span>
         <span>{{matchTime(match)}}</span>
+        <span>{{match.disabled == true}}</span>
       </div>
       <ui-form-field :class="actionClass">
         <ui-button class="sendButton" @click.prevent="sendTyping" raised>Wyślij</ui-button>
@@ -77,7 +78,8 @@
           headers: authHeader() 
         })
           .then((response) => {
-            this.matches = response.data;
+            this.matches = response.data
+            this.markPastMatches()
           })
       },
       matchTime(match) {
@@ -96,6 +98,17 @@
           "userId": this.typings.userId
         });
         console.log(this.matches);
+      },
+      markPastMatches() {
+        for(let i = 0; i < this.matches.length; i++) {
+          let matchDate = new Date(this.matches[i].date).getTime()
+          let now = Date.now()
+          if(matchDate < now) {
+            this.matches[i].disabled = true
+          } else {
+            this.matches[i].disabled = false
+          }
+        }
       }
     },
     watch: {
@@ -107,7 +120,7 @@
       BalmUI
     },
     mounted() {
-      this.getMatches();
+      // this.getMatches()
     }
   }
 </script>

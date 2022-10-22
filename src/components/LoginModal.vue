@@ -50,7 +50,6 @@ export default {
     methods: {
         handleLogin(user) {
             //todo add loading
-            console.log('user in login modal ' + user)
             this.$store.dispatch("auth/login", user).then(
                 () => {
                     this.$emit('closeLoginModal')
