@@ -42,6 +42,7 @@
 
 <script>
   import axios from 'axios';
+  import authHeader from './../service/auth-header';
   import BalmUI from 'balm-ui';
 
   export default {
@@ -50,7 +51,11 @@
       return {
         matches:[],
         config: {
-          defaultDate: 'today'
+          defaultDate: 'today',
+          minDate: 'today',
+          locale: {
+            "firstDayOfWeek": 1
+          }
         },
         date: 'today',
         currentUser: {
@@ -67,7 +72,8 @@
         axios.get('http://localhost:8080/matches/today', {
           params: {
             date: this.date
-          }
+          },
+          headers: authHeader() 
         })
           .then((response) => {
             this.matches = response.data;
@@ -112,7 +118,7 @@
 }
 
 .score {
-  width: 100px;
+  width: 50px;
   margin: 0 5px;
 }
 

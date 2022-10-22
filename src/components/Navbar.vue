@@ -62,6 +62,9 @@ export default {
     methods: {
         openLoginModal() {
             this.$emit('openLoginModal')
+        },
+        logout() {
+            this.$store.dispatch('auth/logout')
         }
     }
 };
