@@ -21,6 +21,7 @@
           <ui-textfield class="score" @input="match.chosen = true" v-model="match.awayScore" outlined></ui-textfield>
         </ui-form-field> 
         <span class="team">{{match.awayTeam}}</span>
+        <span>{{matchTime(match)}}</span>
       </div>
       <ui-form-field :class="actionClass">
         <ui-button class="sendButton" @click.prevent="sendTyping" raised>Wyślij</ui-button>
@@ -78,6 +79,14 @@
           .then((response) => {
             this.matches = response.data;
           })
+      },
+      matchTime(match) {
+        function padTo2Digits(num) {
+          return String(num).padStart(2, '0')
+        }
+        let date = new Date(match.date)
+        let matchHour = padTo2Digits(date.getHours()) + ':' + padTo2Digits(date.getMinutes())
+        return matchHour;
       },
       sendTyping() {
         this.typings.matches = this.matches.filter((match) => match.chosen);
