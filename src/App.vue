@@ -1,9 +1,9 @@
 <template>
   <div>
-    <Navbar @open-login-modal="openLoginModal"/>
+    <Navbar @open-login-modal="openLoginModal" @change-view="changeView"/>
   </div>
   <div id="content-main">
-    <Matches />
+    <component :is="currentView"></component>
     <LoginModal :open-modal="open" @close-login-modal="closeLoginModal"/>
   </div>
 </template>
@@ -12,18 +12,21 @@
   import Matches from './components/Matches.vue';
   import LoginModal from './components/LoginModal.vue';
   import Navbar from './components/Navbar.vue';
+  import MyTypings from './components/MyTypings.vue';
 
   export default {
     name: 'App',
     data() {
       return {
-        open: false
+        open: false,
+        currentView: 'Matches'
       }
     },
     components: {
       Matches,
       LoginModal,
-      Navbar
+      Navbar,
+      MyTypings
     },
     methods: {
       openLoginModal() {
@@ -31,6 +34,9 @@
       },
       closeLoginModal() {
         this.open = false;
+      },
+      changeView(view) {
+        this.currentView = view
       }
     }
   }

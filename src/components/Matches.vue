@@ -24,6 +24,7 @@
           <span class="team">{{match.awayTeam}}</span>
           <span>g. {{matchTime(match)}}</span>
         </div>
+        <span class="errorMessage" v-show="errorMessage">Wystąpił błąd połączenia z serwerem. Spróbuj później. {{errorMessage}}</span>
         <ui-form-field :class="actionClass">
           <ui-button class="sendButton" @click.prevent="sendTyping" raised>Wyślij</ui-button>
         </ui-form-field>
@@ -70,8 +71,10 @@
         },
         typings: {
           matches: [],
-          userId: 0
-        }
+          userId: 0,
+          date: 'today'
+        },
+        errorMessage:''
       }
     },
     computed: {
@@ -90,6 +93,10 @@
           .then((response) => {
             this.matches = response.data
             this.markPastMatches()
+            this.errorMessage = ''
+          })
+          .catch((error) => {
+            this.errorMessage = error.message
           })
       },
       matchTime(match) {
@@ -106,6 +113,8 @@
         axios.post('http://localhost:8080/matches/typings', {
           "matches": this.typings.matches,
           "userId": this.typings.userId
+        }, {
+          headers: authHeader()
         });
         console.log(this.matches);
       },
@@ -162,5 +171,12 @@
   margin-top: 20px;
   display: flex;
   justify-content: center;
+}
+
+.errorMessage {
+  display: flex;
+  justify-content: center;
+  color: red;
+  margin:auto;
 }
 </style>

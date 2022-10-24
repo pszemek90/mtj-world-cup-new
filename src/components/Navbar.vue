@@ -24,15 +24,18 @@
 
         <ui-drawer v-model="openDrawer" type="modal">
             <ui-drawer-header>
-            <ui-drawer-title>Header here</ui-drawer-title>
+                <ui-drawer-title>FIFA Katar 2022</ui-drawer-title>
             </ui-drawer-header>
             <ui-drawer-content>
             <ui-list>
-                <ui-item active>
-                <ui-item-first-content>
-                    <ui-icon>arrow_back</ui-icon>
-                </ui-item-first-content>
-                <ui-item-text-content>Back</ui-item-text-content>
+                <ui-item @click="changePage('MyTypings')">
+                    <ui-item-text-content>Moje typowania</ui-item-text-content>
+                </ui-item>
+                <ui-item>
+                    <ui-item-text-content>Wyniki meczów</ui-item-text-content>
+                </ui-item>
+                <ui-item>
+                    <ui-item-text-content>Tabela typerów</ui-item-text-content>
                 </ui-item>
                 <ui-list-divider></ui-list-divider>
             </ui-list>
@@ -70,6 +73,10 @@ export default {
         },
         logout() {
             this.$store.dispatch('auth/logout')
+        },
+        changePage(page) {
+            this.$emit('changeView', page)
+            this.openDrawer = false
         }
     }
 };
