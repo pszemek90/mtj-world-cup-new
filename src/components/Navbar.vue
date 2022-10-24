@@ -28,14 +28,20 @@
             </ui-drawer-header>
             <ui-drawer-content>
             <ui-list>
+                <ui-item @click="changePage('Matches')">
+                    <ui-item-text-content>Obstawianie</ui-item-text-content>
+                </ui-item>
                 <ui-item @click="changePage('MyTypings')">
                     <ui-item-text-content>Moje typowania</ui-item-text-content>
                 </ui-item>
-                <ui-item>
+                <ui-item @click="changePage('Results')">
                     <ui-item-text-content>Wyniki meczów</ui-item-text-content>
                 </ui-item>
                 <ui-item>
                     <ui-item-text-content>Tabela typerów</ui-item-text-content>
+                </ui-item>
+                <ui-item>
+                    <ui-item-text-content>Profil</ui-item-text-content>
                 </ui-item>
                 <ui-list-divider></ui-list-divider>
             </ui-list>

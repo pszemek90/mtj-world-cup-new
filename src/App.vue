@@ -13,6 +13,7 @@
   import LoginModal from './components/LoginModal.vue';
   import Navbar from './components/Navbar.vue';
   import MyTypings from './components/MyTypings.vue';
+  import Results from './components/Results.vue';
 
   export default {
     name: 'App',
@@ -26,7 +27,8 @@
       Matches,
       LoginModal,
       Navbar,
-      MyTypings
+      MyTypings,
+      Results
     },
     methods: {
       openLoginModal() {

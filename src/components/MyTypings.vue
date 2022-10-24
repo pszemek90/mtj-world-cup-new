@@ -3,7 +3,7 @@
     <template #toggle>
         <div>{{ key }}</div>
     </template>
-    <div v-for="v in value">{{v.homeScore}} - {{v.awayScore}}</div>
+    <div v-for="v in value">{{ v.homeTeam }} {{v.homeScore}} - {{v.awayScore}} {{v.awayTeam}}</div>
     </ui-collapse>
 </template>
 
@@ -11,7 +11,6 @@
 import axios from 'axios'
 import authHeader from './../service/auth-header';
 import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'
-import BalmUI from 'balm-ui'
 
 export default {
     name: 'MyTypings',
