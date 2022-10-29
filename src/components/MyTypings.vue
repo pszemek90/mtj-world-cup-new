@@ -3,7 +3,10 @@
     <template #toggle>
         <div>{{ key }}</div>
     </template>
-    <div v-for="v in value">{{ v.homeTeam }} {{v.homeScore}} - {{v.awayScore}} {{v.awayTeam}}</div>
+    <div v-for="v in value">{{ v.homeTeam }} {{v.homeScore}} - {{v.awayScore}} {{v.awayTeam}} 
+        <ui-icon v-if="v.status == 'UNKNOWN'">question_mark</ui-icon>
+        <ui-icon class="correct" v-else-if="v.status == 'CORRECT'">done</ui-icon>
+        <ui-icon class="incorrect" v-else>clear</ui-icon></div>
     </ui-collapse>
 </template>
 
@@ -28,7 +31,6 @@ export default {
                 },
                 headers: authHeader()
             }).then((response) => {
-                console.log(response)
                 this.typings = response.data
             })
         }
@@ -42,5 +44,10 @@ export default {
 </script>
 
 <style scoped>
-
+.correct {
+    color: green;
+}
+.incorrect {
+    color: red;
+}
 </style>
