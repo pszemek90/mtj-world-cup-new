@@ -14,6 +14,7 @@
   import Navbar from './components/Navbar.vue';
   import MyTypings from './components/MyTypings.vue';
   import Results from './components/Results.vue';
+  import Typers from './components/Typers.vue';
 
   export default {
     name: 'App',
@@ -28,7 +29,8 @@
       LoginModal,
       Navbar,
       MyTypings,
-      Results
+      Results,
+      Typers
     },
     methods: {
       openLoginModal() {
