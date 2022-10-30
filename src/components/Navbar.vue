@@ -40,7 +40,7 @@
                 <ui-item @click="changePage('Typers')">
                     <ui-item-text-content>Tabela typerów</ui-item-text-content>
                 </ui-item>
-                <ui-item>
+                <ui-item @click="changePage('Profile')">
                     <ui-item-text-content>Profil</ui-item-text-content>
                 </ui-item>
                 <ui-list-divider></ui-list-divider>
