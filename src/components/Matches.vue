@@ -26,7 +26,7 @@
         </div>
         <span class="errorMessage" v-show="errorMessage">Wystąpił błąd połączenia z serwerem. Spróbuj później. {{errorMessage}}</span>
         <ui-form-field :class="actionClass">
-          <ui-button class="sendButton" @click.prevent="sendTyping" raised>Wyślij</ui-button>
+          <ui-button class="sendButton" @click.prevent="showSendTypingModal" raised>Wyślij</ui-button>
         </ui-form-field>
       </template>
     </ui-form>
@@ -38,11 +38,18 @@
       <p>
         Twoje typowania to:
       </p>
-      <p>
-        
+      <p v-for="match in chosenMatches">
+        {{match.homeTeam}} {{match.homeScore}} - {{match.awayScore}} {{match.awayTeam}}
       </p>
     </ui-dialog-content>
+    <ui-dialog-actions></ui-dialog-actions>
   </ui-dialog>
+  <ui-snackbar v-model="showSuccessSnackbar" 
+    message="Pomyślnie wysłano" :action-type="actionType" position="top">
+  </ui-snackbar>
+  <ui-snackbar v-model="showErrorSnackbar" 
+    message="Wystąpił błąd" :action-type="actionType" position="top">
+  </ui-snackbar>
 </template>
 
 <script>
@@ -74,12 +81,19 @@
           userId: 0,
           date: 'today'
         },
-        errorMessage:''
+        errorMessage:'',
+        sendTypingsModalOpened: false,
+        showSuccessSnackbar: false,
+        showErrorSnackbar: false,
+        actionType: 1
       }
     },
     computed: {
       loggedIn() {
         return this.$store.state.auth.status.loggedIn;
+      },
+      chosenMatches() {
+        return this.matches.filter(match => match.chosen)
       }
     },
     methods: {
@@ -107,16 +121,26 @@
         let matchHour = padTo2Digits(date.getHours()) + ':' + padTo2Digits(date.getMinutes())
         return matchHour;
       },
-      sendTyping() {
-        this.typings.matches = this.matches.filter((match) => match.chosen);
-        this.typings.userId = this.$store.state.auth.user.id
-        axios.post('http://localhost:8080/matches/typings', {
-          "matches": this.typings.matches,
-          "userId": this.typings.userId
-        }, {
-          headers: authHeader()
-        });
-        console.log(this.matches);
+      showSendTypingModal() {
+        this.sendTypingsModalOpened = true
+      },
+      sendTyping(result) {
+        if(result) {
+          this.typings.userId = this.$store.state.auth.user.id
+          axios.post('http://localhost:8080/matches/typings', {
+            "matches": this.chosenMatches,
+            "userId": this.typings.userId
+          }, {
+            headers: authHeader()
+          }).then((response) => {
+            if(response) {
+              this.showSuccessSnackbar = true
+            }
+          }).catch((error) => {
+            this.showErrorSnackbar = true
+          })
+        }
+        this.sendTypingsModalOpened = false
       },
       markPastMatches() {
         for(let i = 0; i < this.matches.length; i++) {
