@@ -3,7 +3,8 @@
     <Navbar @open-login-modal="openLoginModal" @change-view="changeView"/>
   </div>
   <div id="content-main">
-    <component :is="currentView"></component>
+    <component v-if="loggedIn" :is="currentView"></component>
+    <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
     <LoginModal :open-modal="open" @close-login-modal="closeLoginModal"/>
   </div>
 </template>
@@ -23,6 +24,11 @@
       return {
         open: false,
         currentView: 'Matches'
+      }
+    },
+    computed: {
+      loggedIn() {
+        return this.$store.state.auth.status.loggedIn;
       }
     },
     components: {
@@ -49,5 +55,9 @@
 </script>
 
 <style scoped>
-
+.login-message {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
 </style>

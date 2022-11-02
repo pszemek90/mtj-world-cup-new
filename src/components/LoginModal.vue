@@ -1,7 +1,7 @@
 <template>
 
     <ui-dialog v-model="open">
-        <ui-dialog-title>Zaloguj się</ui-dialog-title>
+        <ui-dialog-title closable>Zaloguj się</ui-dialog-title>
         <ui-dialog-content>
             <ui-form type="|" item-margin-bottom="16" action-align="center">
                 <template #default="{ subitemClass, actionClass }">
@@ -18,7 +18,7 @@
             <div v-if="message">{{message}}</div>
         </ui-dialog-content>
         <ui-dialog-actions>
-            <ui-button @click.prevent="handleLogin(user)">Zaloguj</ui-button>
+            <ui-button raised @click.prevent="handleLogin(user)">Zaloguj</ui-button>
         </ui-dialog-actions>
     </ui-dialog>
 

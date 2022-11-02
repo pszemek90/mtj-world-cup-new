@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loggedIn">
+  <div>
     <div class="datepicker">
       <ui-datepicker
         v-model="date"
@@ -31,7 +31,6 @@
       </template>
     </ui-form>
   </div>
-  <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
   <ui-dialog v-model="sendTypingsModalOpened" @confirm="sendTyping">
     <ui-dialog-title>Wysyłane typowania</ui-dialog-title>
     <ui-dialog-content>
@@ -189,12 +188,6 @@
 
 .sendButton {
   margin-top: 20px;
-}
-
-.login-message {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
 }
 
 .errorMessage {
