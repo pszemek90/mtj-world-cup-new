@@ -1,5 +1,6 @@
 <template>
   <div>
+    <span class="overall-pool" v-show="isToday">Dzisiejsza pula: {{overallPool}}</span>
     <div class="datepicker">
       <ui-datepicker
         v-model="date"
@@ -84,7 +85,8 @@
         sendTypingsModalOpened: false,
         showSuccessSnackbar: false,
         showErrorSnackbar: false,
-        actionType: 1
+        actionType: 1,
+        overallPool: 'aaa'
       }
     },
     computed: {
@@ -93,6 +95,13 @@
       },
       chosenMatches() {
         return this.matches.filter(match => match.chosen)
+      },
+      isToday() {
+        let rawCalendarDate = new Date(this.date)
+        let calendarDate = rawCalendarDate.getFullYear() + '-' + rawCalendarDate.getMonth() + '-' + rawCalendarDate.getDay()
+        let rawToday = new Date()
+        let today = rawToday.getFullYear() + '-' + rawToday.getMonth() + '-' + rawToday.getDay()
+        return calendarDate === today
       }
     },
     methods: {
@@ -151,10 +160,24 @@
             this.matches[i].disabled = false
           }
         }
+      },
+      getOverallPool() {
+        axios.get(this.$store.state.origin + ':8080/overallPool', {
+          headers: authHeader()
+        }).then((response) => {
+          console.log(response.data)
+          console.log(response.data.overallPool)
+          this.overallPool = response.data.overallPool + ' zł'
+        }).catch((error) => {
+          this.overallPool = 'Nie udało się pobrać puli'
+        })
       }
     },
     watch: {
       date() {
+        if(this.isToday) {
+          this.getOverallPool()
+        }
         this.getMatches()
       }
     }
@@ -195,5 +218,13 @@
   justify-content: center;
   color: red;
   margin:auto;
+}
+
+.overall-pool {
+  display: flex;
+  margin: 10px auto;
+  justify-content: center;
+  font-weight: 400;
+  font-size: 1.5rem;
 }
 </style>
