@@ -32,7 +32,7 @@ export default {
     },
     methods: {
         getTypers() {
-            axios.get('http://localhost:8080/typings/typerScores', {
+            axios.get(this.$store.state.origin + ':8080/typings/typerScores', {
                 headers: authHeader()
             })
             .then((response) => {

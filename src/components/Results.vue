@@ -21,7 +21,7 @@ export default {
     },
     methods: {
         getFinishedMatches() {
-            axios.get('http://localhost:8080/results', {
+            axios.get(this.$store.state.origin + ':8080/results', {
                 headers: authHeader()
             })
             .then((response) => {

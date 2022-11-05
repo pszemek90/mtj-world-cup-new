@@ -25,7 +25,7 @@ export default {
     methods: {
         getTypingsForUser() {
             let userId = this.$store.state.auth.user.id
-            axios.get('http://localhost:8080/typings', {
+            axios.get(this.$store.state.origin + ':8080/typings', {
                 params: {
                     userId: userId
                 },

@@ -97,7 +97,7 @@
     },
     methods: {
       getMatches() {
-        axios.get('http://localhost:8080/matches/today', {
+        axios.get(this.$store.state.origin + ':8080/matches/today', {
           params: {
             date: this.date
           },
@@ -126,7 +126,7 @@
       sendTyping(result) {
         if(result) {
           this.typings.userId = this.$store.state.auth.user.id
-          axios.post('http://localhost:8080/matches/typings', {
+          axios.post(this.$store.state.origin + ':8080/matches/typings', {
             "matches": this.chosenMatches,
             "userId": this.typings.userId
           }, {
