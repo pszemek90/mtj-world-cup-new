@@ -165,8 +165,6 @@
         axios.get(this.$store.state.origin + ':8080/overallPool', {
           headers: authHeader()
         }).then((response) => {
-          console.log(response.data)
-          console.log(response.data.overallPool)
           this.overallPool = response.data.overallPool + ' zł'
         }).catch((error) => {
           this.overallPool = 'Nie udało się pobrać puli'
