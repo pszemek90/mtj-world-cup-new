@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 const origin = window.location.origin;
-const originWOPortNo = origin.slice(0, origin.lastIndexOf(':'));
+const colonCount = origin.match(/:/g).length;
+const originWOPortNo = colonCount == 1 
+    ? origin
+    : origin.slice(0, origin.lastIndexOf(':'));
 const API_URL = originWOPortNo + ':8080/auth/';
 
 class AuthService {
