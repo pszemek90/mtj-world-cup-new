@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-const API_URL = this.$store.state.origin + ':8080/auth/';
+const origin = window.location.origin;
+const originWOPortNo = origin.slice(0, origin.lastIndexOf(':'));
+const API_URL = originWOPortNo + ':8080/auth/';
 
 class AuthService {
     login(user) {
-        console.log('user ' + user)
+        console.log('api url ' + API_URL)
         return axios.post(API_URL + 'signin', {
             username: user.username,
             password: user.password
