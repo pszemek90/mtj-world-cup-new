@@ -44,6 +44,9 @@
                     <ui-item-text-content>Profil</ui-item-text-content>
                 </ui-item>
                 <ui-list-divider></ui-list-divider>
+                <ui-item>
+                    <ui-item-text-content>Twój kraj: {{usersCountry}}</ui-item-text-content>
+                </ui-item>
             </ui-list>
             </ui-drawer-content>
         </ui-drawer>
@@ -71,6 +74,9 @@ export default {
             ? this.$store.state.auth.user.username 
             : 'nieznajomy'
         return 'Witaj ' + currentUser;
+      },
+      usersCountry() {
+        return this.loggedIn ? this.$store.state.auth.user.country : ''
       }
     },
     methods: {
