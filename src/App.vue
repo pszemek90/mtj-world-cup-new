@@ -23,7 +23,8 @@
     data() {
       return {
         open: false,
-        currentView: 'Matches'
+        currentView: 'Matches',
+        openCountryModal: false
       }
     },
     computed: {
@@ -46,6 +47,9 @@
       },
       closeLoginModal() {
         this.open = false;
+        if(this.$store.state.auth.user.isFirstLogin) {
+          this.openCountryModal = true;
+        }
       },
       changeView(view) {
         this.currentView = view

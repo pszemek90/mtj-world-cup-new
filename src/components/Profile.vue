@@ -24,7 +24,14 @@ export default {
     methods: {
         getUserBalance() {
             if(this.loggedIn) {
-                this.balance = this.$store.state.auth.user.balance
+                axios.get(this.$store.state.origin + ':8080/users/balance', {
+                    params: {
+                        userId: this.$store.state.auth.user.id
+                    },
+                    headers: authHeader()
+                }).then((response) => {
+                    this.balance = response.data
+                })
             }
         }
     },
