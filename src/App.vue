@@ -6,6 +6,7 @@
     <component v-if="loggedIn" :is="currentView"></component>
     <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
     <LoginModal :open-modal="open" @close-login-modal="closeLoginModal"/>
+    <CountryModal :open-modal="openCountryModal" @close-country-modal="closeCountryModal"/>
   </div>
 </template>
 
@@ -17,6 +18,7 @@
   import Results from './components/Results.vue';
   import Typers from './components/Typers.vue';
   import Profile from './components/Profile.vue';
+  import CountryModal from './components/CountryModal.vue';
 
   export default {
     name: 'App',
@@ -39,17 +41,21 @@
       MyTypings,
       Results,
       Typers,
-      Profile
+      Profile,
+      CountryModal
     },
     methods: {
       openLoginModal() {
-        this.open = true;
+        this.open = true
       },
       closeLoginModal() {
-        this.open = false;
+        this.open = false
         if(this.$store.state.auth.user.isFirstLogin) {
-          this.openCountryModal = true;
+          this.openCountryModal = true
         }
+      },
+      closeCountryModal() {
+        this.openCountryModal = false
       },
       changeView(view) {
         this.currentView = view
