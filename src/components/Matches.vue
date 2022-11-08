@@ -12,15 +12,16 @@
     </div>
     <ui-form type="|" action-align="center">
       <template #default="{subitemClass, actionClass}">
-        <div class="match" v-for="match in matches">
+        <div class="match" v-for="match in matches" :key="match.id">
           <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
           <span class="team">{{match.homeTeam}}</span>
           <ui-form-field>
-            <ui-textfield class="score" @input="match.chosen = true" endAligned v-model="match.homeScore" outlined :disabled="match.disabled"></ui-textfield>
+            <ui-textfield class="score" @input="match.chosen = true" endAligned v-model.trim="match.homeScore" outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
+            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>
           </ui-form-field>
           -
           <ui-form-field>
-            <ui-textfield class="score" @input="match.chosen = true" v-model="match.awayScore" outlined :disabled="match.disabled"></ui-textfield>
+            <ui-textfield class="score" @input="match.chosen = true" v-model.trim="match.awayScore" outlined :disabled="match.disabled" required></ui-textfield>
           </ui-form-field> 
           <span class="team">{{match.awayTeam}}</span>
           <span>g. {{matchTime(match)}}</span>
@@ -56,6 +57,15 @@
   import axios from 'axios';
   import authHeader from './../service/auth-header';
   import BalmUI from 'balm-ui';
+  import { useValidator } from 'balm-ui';
+
+  /*const validations = [
+    {
+      key: 'homeTeam',
+      label: 'Home Score',
+      validator: 'required, homeTeam'
+    }
+  ]*/
 
   export default {
     name: 'Matches',
@@ -73,9 +83,6 @@
           }
         },
         date: 'today',
-        currentUser: {
-          userId: 1
-        },
         typings: {
           matches: [],
           userId: 0,
@@ -86,7 +93,10 @@
         showSuccessSnackbar: false,
         showErrorSnackbar: false,
         actionType: 1,
-        overallPool: 'aaa'
+        overallPool: '',
+        balmUI: useValidator(),
+        // validations,
+        validMsg: {}
       }
     },
     computed: {
@@ -130,7 +140,14 @@
         return matchHour;
       },
       showSendTypingModal() {
-        this.sendTypingsModalOpened = true
+        /*let tmp = JSON.parse(JSON.stringify(this.chosenMatches))
+        console.log(tmp[0])
+        let result = this.balmUI.validate(tmp[0]);
+        let {valid, validMsg} = result;
+        this.validMsg = validMsg;
+        if(valid) {*/
+          this.sendTypingsModalOpened = true
+        // }
       },
       sendTyping(result) {
         if(result) {
