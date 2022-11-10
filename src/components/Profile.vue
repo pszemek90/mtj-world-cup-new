@@ -1,8 +1,8 @@
 <template>
     <div class="balance">
-        Stan konta: {{balance}}zł
+        Stan konta: {{balance}} zł
     </div>
-	<ui-button @click="open = true">Zmień hasło</ui-button>
+	<ui-button class="change-password" @click="open = true" raised>Zmień hasło</ui-button>
 	<ui-dialog v-model="open">
 		<ui-dialog-title closable>Zmień hasło</ui-dialog-title>
 		<ui-dialog-content>
@@ -114,5 +114,10 @@ export default {
 }
 .error-message {
 	color: red
+}
+
+.change-password {
+	display: flex;
+	margin: 0 auto;
 }
 </style>
