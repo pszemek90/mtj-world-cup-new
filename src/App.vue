@@ -70,4 +70,7 @@
   display: flex;
   justify-content: center;
 }
+*, *:before, *:after {
+	box-sizing: border-box;
+}
 </style>

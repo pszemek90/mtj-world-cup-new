@@ -1,11 +1,13 @@
 <template>
-	<ui-table class="table" :data="history" :thead="head" :tbody="body">
-		<template #message="{ data }">
-			<div class="message-cell">{{ data.message }}</div>
-		</template>
-		<ui-pagination v-model="page" show-total :total="total" mini>
-		</ui-pagination>
-	</ui-table>
+	<div class="table-container">
+		<ui-table class="table" :data="history" :thead="head" :tbody="body">
+			<template #message="{ data }">
+				<div class="message-cell">{{ data.message }}</div>
+			</template>
+			<ui-pagination v-model="page" show-total :total="total" @update:model-value="getUserHistory">
+			</ui-pagination>
+		</ui-table>
+	</div>
 </template>
 
 <script>
@@ -43,14 +45,17 @@ export default {
 	},
 	methods: {
 		getUserHistory() {
+			console.log(this.page)
 			this.errorMessage = ''
 			axios.get(this.$store.state.origin + ':8080/users/history',{
 				params: {
-					userId: this.$store.state.auth.user.id
+					userId: this.$store.state.auth.user.id,
+					pageNumber: this.page
 				},
 				headers: authHeader()
 			}).then((response) => {
-				this.history = response.data
+				this.history = response.data.history
+				this.total = response.data.total
 			}).catch((error) => {
 				this.errorMessage = 'Nie udało się pobrać historii użytkownika.'
 			})
@@ -63,9 +68,11 @@ export default {
 </script>
 
 <style scoped>
-.table {
-	box-sizing: border-box;
+.table-container {
 	margin: 20px;
+}
+.table {
+	width: 100%;
 }
 .message-cell {
 	width: 100%;
