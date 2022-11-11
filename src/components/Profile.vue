@@ -3,6 +3,7 @@
         Stan konta: {{balance}} zł
     </div>
 	<ui-button class="change-password" @click="open = true" raised>Zmień hasło</ui-button>
+	<AccountHistory/>
 	<ui-dialog v-model="open">
 		<ui-dialog-title closable>Zmień hasło</ui-dialog-title>
 		<ui-dialog-content>
@@ -37,9 +38,13 @@
 import BalmUI from 'balm-ui'
 import axios from 'axios'
 import authHeader from './../service/auth-header'
+import AccountHistory from "@/components/AccountHistory.vue";
 
 export default {
     name: 'Profile',
+	components: {
+		AccountHistory
+	},
     data() {
         return {
             balance: 0,
