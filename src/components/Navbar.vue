@@ -85,7 +85,7 @@ export default {
         return this.loggedIn ? this.$store.state.auth.user.country : ''
       },
 		country() {
-	        return new URL(`./../assets/icons/${this.usersCountry}.svg.webp`, import.meta.url).href
+	        return new URL(`../assets/icons/${this.usersCountry}.svg.webp`, import.meta.url).href
 		}
     },
     methods: {
