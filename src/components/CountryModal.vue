@@ -1,7 +1,7 @@
 <template>
 
     <ui-dialog v-model="open">
-        <ui-dialog-title closable>Wylosowany kraj:</ui-dialog-title>
+        <ui-dialog-title>Wylosowany kraj:</ui-dialog-title>
         <ui-dialog-content>
             {{usersCountry}}
         </ui-dialog-content>
