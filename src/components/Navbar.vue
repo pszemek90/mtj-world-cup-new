@@ -6,19 +6,25 @@
             :title="title"
             @nav="openDrawer = true"
         >
+	        <template #default>
+		        <div class="title-container">
+			        <span>{{ title }}</span>
+			        <img v-show="usersCountry" class="flag" :src="country"/>
+		        </div>
+	        </template>
             <template #toolbar="{ toolbarItemClass }">
-            <ui-icon-button
-                :class="toolbarItemClass"
-                icon="login"
-                @click="openLoginModal"
-                v-if="!loggedIn"
-            ></ui-icon-button>
-            <ui-icon-button
-                :class="toolbarItemClass"
-                icon="logout"
-                @click="logout"
-                v-else
-            ></ui-icon-button>
+	            <ui-icon-button
+	                :class="toolbarItemClass"
+	                icon="login"
+	                @click="openLoginModal"
+	                v-if="!loggedIn"
+	            ></ui-icon-button>
+	            <ui-icon-button
+	                :class="toolbarItemClass"
+	                icon="logout"
+	                @click="logout"
+	                v-else
+	            ></ui-icon-button>
             </template>
         </ui-top-app-bar>
 
@@ -77,7 +83,10 @@ export default {
       },
       usersCountry() {
         return this.loggedIn ? this.$store.state.auth.user.country : ''
-      }
+      },
+		country() {
+	        return new URL(`./../assets/icons/${this.usersCountry}.svg.webp`, import.meta.url).href
+		}
     },
     methods: {
         openLoginModal() {
@@ -96,5 +105,13 @@ export default {
 </script>
 
 <style scoped>
-
+.title-container {
+	display: flex;
+	align-items: center;
+}
+.flag {
+	width: 60px;
+	height: 40px;
+	margin: 10px 10px 10px 30px;
+}
 </style>

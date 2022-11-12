@@ -1,10 +1,10 @@
 <template>
 
-    <ui-dialog v-model="open">
+    <ui-dialog v-model="open" @close="closeModal">
         <ui-dialog-title closable>Zaloguj się</ui-dialog-title>
         <ui-dialog-content>
             <ui-form type="|" item-margin-bottom="16" action-align="center">
-                <template #default="{ subitemClass, actionClass }">
+                <template #default>
                     <ui-form-field required>
                         <label>Login:</label>
                         <ui-textfield v-model="user.username"></ui-textfield>
@@ -62,7 +62,10 @@ export default {
                         error.toString();
                 }
             )
-        }
+        },
+	    closeModal() {
+			this.$emit('closeLoginModal')
+	    }
     }
 }
 </script>
