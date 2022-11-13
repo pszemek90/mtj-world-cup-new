@@ -17,7 +17,7 @@
           <span class="team">{{match.homeTeam}}</span>
           <ui-form-field>
             <ui-textfield class="score" @input="match.chosen = true" endAligned v-model.trim="match.homeScore" outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
-            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>
+<!--            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>-->
           </ui-form-field>
           -
           <ui-form-field>
