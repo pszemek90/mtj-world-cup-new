@@ -108,9 +108,9 @@
       },
       isToday() {
         let rawCalendarDate = new Date(this.date)
-        let calendarDate = rawCalendarDate.getFullYear() + '-' + rawCalendarDate.getMonth() + '-' + rawCalendarDate.getDay()
+        let calendarDate = rawCalendarDate.getFullYear() + '-' + rawCalendarDate.getMonth() + '-' + rawCalendarDate.getDate()
         let rawToday = new Date()
-        let today = rawToday.getFullYear() + '-' + rawToday.getMonth() + '-' + rawToday.getDay()
+        let today = rawToday.getFullYear() + '-' + rawToday.getMonth() + '-' + rawToday.getDate()
         return calendarDate === today
       }
     },
