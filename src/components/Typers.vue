@@ -76,5 +76,8 @@ export default {
 .flag {
 	width: 60px;
 	height: 40px;
+	border: 1px solid black;
+	display: flex;
+	margin: auto;
 }
 </style>
