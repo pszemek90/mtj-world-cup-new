@@ -1,6 +1,10 @@
 <template>
     <div class="table-container">
-        <ui-table class="table" :data="typers" :thead="head" :tbody="body"></ui-table>
+        <ui-table class="table" :data="typers" :thead="head" :tbody="body">
+	        <template #country="{data}">
+		        <img class="flag" :src="getCountry(data.country)"/>
+	        </template>
+        </ui-table>
     </div>
 </template>
 
@@ -20,6 +24,9 @@ export default {
             }, {
                 value: 'Trafione',
                 align: 'center'
+            }, {
+				value: 'Kraj',
+	            align: 'center'
             }],
             body: [{
                 field: 'username',
@@ -27,6 +34,9 @@ export default {
             }, {
                 field: 'correctTypings',
                 align: 'center'
+            }, {
+				slot: 'country',
+	            align: 'center'
             }]
         }
     },
@@ -38,7 +48,12 @@ export default {
             .then((response) => {
                 this.typers = response.data
             })
-        }
+        },
+	    getCountry(countryString) {
+		    if(countryString){
+			    return new URL(`../assets/icons/${countryString}.svg.webp`, import.meta.url).href
+		    }
+	    }
     },
     mounted() {
         this.getTypers()
@@ -57,5 +72,9 @@ export default {
 }
 .table {
     width: 100%;
+}
+.flag {
+	width: 60px;
+	height: 40px;
 }
 </style>

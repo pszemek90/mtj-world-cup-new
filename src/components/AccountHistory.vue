@@ -45,7 +45,6 @@ export default {
 	},
 	methods: {
 		getUserHistory() {
-			console.log(this.page)
 			this.errorMessage = ''
 			axios.get(this.$store.state.origin + ':8080/users/history',{
 				params: {

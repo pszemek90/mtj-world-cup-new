@@ -10,10 +10,6 @@
 			    <ui-icon class="incorrect" v-else>clear</ui-icon>
 		    </template>
 	    </ui-table>
-<!--    <div v-for="v in value">{{ v.homeTeam }} {{v.homeScore}} - {{v.awayScore}} {{v.awayTeam}}
-        <ui-icon v-if="v.status == 'UNKNOWN'">question_mark</ui-icon>
-        <ui-icon class="correct" v-else-if="v.status == 'CORRECT'">done</ui-icon>
-        <ui-icon class="incorrect" v-else>clear</ui-icon></div>-->
     </ui-collapse>
 </template>
 
@@ -60,7 +56,6 @@ export default {
                 },
                 headers: authHeader()
             }).then((response) => {
-				console.log(response.data)
                 this.typings = response.data
             })
         }
