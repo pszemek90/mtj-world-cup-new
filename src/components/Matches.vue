@@ -16,17 +16,18 @@
           <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
           <span class="team">{{match.homeTeam}}</span>
           <ui-form-field>
-            <ui-textfield class="score" @input="match.chosen = true" endAligned v-model.trim="match.homeScore" outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
+            <ui-textfield @keypress="onlyNumberKey($event)" class="score" @input="match.chosen = true" endAligned v-model.trim="match.homeScore" outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
 <!--            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>-->
           </ui-form-field>
           -
           <ui-form-field>
-            <ui-textfield class="score" @input="match.chosen = true" v-model.trim="match.awayScore" outlined :disabled="match.disabled" required></ui-textfield>
+            <ui-textfield @keypress="onlyNumberKey($event)" class="score" @input="match.chosen = true" v-model.trim="match.awayScore" outlined :disabled="match.disabled" required></ui-textfield>
           </ui-form-field> 
           <span class="team">{{match.awayTeam}}</span>
           <span>g. {{matchTime(match)}}</span>
         </div>
         <span class="errorMessage" v-show="errorMessage">Wystąpił błąd połączenia z serwerem. Spróbuj później. {{errorMessage}}</span>
+		<span class="errorMessage" v-show="wrongTypings">{{wrongTypings}}</span>
         <ui-form-field :class="actionClass">
           <ui-button class="sendButton" @click.prevent="showSendTypingModal" raised>Wyślij</ui-button>
         </ui-form-field>
@@ -96,7 +97,8 @@
         overallPool: '',
         balmUI: useValidator(),
         // validations,
-        validMsg: {}
+        validMsg: {},
+		wrongTypings: ''
       }
     },
     computed: {
@@ -146,7 +148,15 @@
         let {valid, validMsg} = result;
         this.validMsg = validMsg;
         if(valid) {*/
-          this.sendTypingsModalOpened = true
+	      this.wrongTypings = ''
+	      if(this.chosenMatches.length === 0) {
+			  this.wrongTypings = 'Musisz wysłać przynajmniej jeden mecz.'
+	      } else if(this.chosenMatches.filter(match => match.homeScore === '').length > 0
+		      || this.chosenMatches.filter(match => match.awayScore === '').length > 0) {
+			  this.wrongTypings = 'Nie możesz wysłać pustego wyniku'
+	      } else {
+		      this.sendTypingsModalOpened = true
+	      }
         // }
       },
       sendTyping(result) {
@@ -186,7 +196,16 @@
         }).catch((error) => {
           this.overallPool = 'Nie udało się pobrać puli'
         })
-      }
+      },
+		onlyNumberKey(event) {
+		  event = (event) ? event : window.event
+		  let key = (event.which) ? event.which : event.keyCode
+			 if(key > 31 && (key < 48 || key > 57)){
+				 event.preventDefault();
+			 } else {
+				 return true;
+			 }
+		}
     },
     watch: {
       date() {
