@@ -40,7 +40,7 @@
       <p>
         Twoje typowania to:
       </p>
-      <p v-for="match in chosenMatches">
+      <p v-for="match in sentMatches">
         {{match.homeTeam}} {{match.homeScore}} - {{match.awayScore}} {{match.awayTeam}}
       </p>
     </ui-dialog-content>
@@ -55,18 +55,17 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import authHeader from './../service/auth-header';
-  import BalmUI from 'balm-ui';
-  import { useValidator } from 'balm-ui';
+import axios from 'axios';
+import authHeader from './../service/auth-header';
+import BalmUI, {useValidator} from 'balm-ui';
 
-  /*const validations = [
-    {
-      key: 'homeTeam',
-      label: 'Home Score',
-      validator: 'required, homeTeam'
-    }
-  ]*/
+/*const validations = [
+  {
+	key: 'homeTeam',
+	label: 'Home Score',
+	validator: 'required, homeTeam'
+  }
+]*/
 
   export default {
     name: 'Matches',
@@ -98,7 +97,8 @@
         balmUI: useValidator(),
         // validations,
         validMsg: {},
-		wrongTypings: ''
+		wrongTypings: '',
+		sentMatches: []
       }
     },
     computed: {
@@ -138,8 +138,7 @@
           return String(num).padStart(2, '0')
         }
         let date = new Date(match.date)
-        let matchHour = padTo2Digits(date.getHours()) + ':' + padTo2Digits(date.getMinutes())
-        return matchHour;
+	      return padTo2Digits(date.getHours()) + ':' + padTo2Digits(date.getMinutes());
       },
       showSendTypingModal() {
         /*let tmp = JSON.parse(JSON.stringify(this.chosenMatches))
@@ -155,6 +154,7 @@
 		      || this.chosenMatches.filter(match => match.awayScore === '').length > 0) {
 			  this.wrongTypings = 'Nie możesz wysłać pustego wyniku'
 	      } else {
+			  this.sentMatches = this.chosenMatches.filter(match => Date.parse(match.date) > Date.now())
 		      this.sendTypingsModalOpened = true
 	      }
         // }
@@ -163,7 +163,7 @@
         if(result) {
           this.typings.userId = this.$store.state.auth.user.id
           axios.post(this.$store.state.origin + ':8080/matches/typings', {
-            "matches": this.chosenMatches,
+            "matches": this.sentMatches,
             "userId": this.typings.userId
           }, {
             headers: authHeader()
