@@ -2,7 +2,7 @@
     <div class="table-container">
         <ui-table class="table" :data="typers" :thead="head" :tbody="body">
 	        <template #country="{data}">
-		        <img class="flag" :src="getCountry(data.country)"/>
+		        <img class="flag" :src="getCountry(data.country)" v-tooltip="`${data.country}`" :aria-describedby="data.country"/>
 	        </template>
         </ui-table>
     </div>
