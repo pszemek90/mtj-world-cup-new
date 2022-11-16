@@ -16,12 +16,12 @@
           <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
           <span class="team">{{match.homeTeam}}</span>
           <ui-form-field>
-            <ui-textfield @keypress="onlyNumberKey($event)" class="score" @input="match.chosen = true" endAligned v-model.trim="match.homeScore" outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
+            <ui-textfield input-type="number" pattern="\d*" class="score" @input="match.chosen = true" endAligned v-model.trim="match.homeScore" outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
 <!--            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>-->
           </ui-form-field>
           -
           <ui-form-field>
-            <ui-textfield @keypress="onlyNumberKey($event)" class="score" @input="match.chosen = true" v-model.trim="match.awayScore" outlined :disabled="match.disabled" required></ui-textfield>
+            <ui-textfield input-type="number" pattern="\d*" class="score" @input="match.chosen = true" v-model.trim="match.awayScore" outlined :disabled="match.disabled" required></ui-textfield>
           </ui-form-field> 
           <span class="team">{{match.awayTeam}}</span>
           <span>g. {{matchTime(match)}}</span>
@@ -196,16 +196,7 @@ import BalmUI, {useValidator} from 'balm-ui';
         }).catch((error) => {
           this.overallPool = 'Nie udało się pobrać puli'
         })
-      },
-		onlyNumberKey(event) {
-		  event = (event) ? event : window.event
-		  let key = (event.which) ? event.which : event.keyCode
-			 if(key > 31 && (key < 48 || key > 57)){
-				 event.preventDefault();
-			 } else {
-				 return true;
-			 }
-		}
+      }
     },
     watch: {
       date() {
@@ -231,10 +222,17 @@ import BalmUI, {useValidator} from 'balm-ui';
   margin: 0 5px;
   text-align: center;
 }
-
-.score {
-  width: 50px;
-  margin: 0 5px;
+@media (min-width: 600px){
+	.score {
+		width: 70px;
+		margin: 0 5px;
+	}
+}
+@media (max-width: 599px) {
+	.score {
+		width: 40px;
+		margin: 0 5px;
+	}
 }
 
 .datepicker {
