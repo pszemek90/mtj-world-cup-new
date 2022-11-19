@@ -16,7 +16,7 @@
           <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
           <span class="team">{{match.homeTeam}}</span>
           <ui-form-field>
-            <ui-textfield input-type="number" pattern="\d*" class="score" @input="match.chosen = true" endAligned v-model.trim="match.homeScore" outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
+            <ui-textfield v-model.trim="match.homeScore" input-type="number" pattern="\d*" class="score" @input="match.chosen = true" endAligned outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
 <!--            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>-->
           </ui-form-field>
           -
@@ -126,6 +126,8 @@ import BalmUI, {useValidator} from 'balm-ui';
         })
           .then((response) => {
             this.matches = response.data
+			this.matches.forEach(match => match.homeScore = '')
+			this.matches.forEach(match => match.awayScore = '')
             this.markPastMatches()
             this.errorMessage = ''
           })
