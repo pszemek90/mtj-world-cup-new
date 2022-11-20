@@ -13,18 +13,21 @@
     <ui-form type="|" action-align="center">
       <template #default="{subitemClass, actionClass}">
         <div class="match" v-for="match in matches" :key="match.id">
-          <ui-checkbox v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
-          <span class="team">{{match.homeTeam}}</span>
-          <ui-form-field>
-            <ui-textfield v-model.trim="match.homeScore" input-type="number" pattern="\d*" class="score" @input="match.chosen = true" endAligned outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
-<!--            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>-->
-          </ui-form-field>
-          -
-          <ui-form-field>
-            <ui-textfield input-type="number" pattern="\d*" class="score" @input="match.chosen = true" v-model.trim="match.awayScore" outlined :disabled="match.disabled" required></ui-textfield>
-          </ui-form-field> 
-          <span class="team">{{match.awayTeam}}</span>
-          <span>g. {{matchTime(match)}}</span>
+	        <ui-checkbox v-show="!match.disabled" v-model="match.chosen" :disabled="match.disabled"></ui-checkbox>
+	        <span class="team">{{match.homeTeam}}</span>
+	        <ui-form-field v-show="!match.disabled">
+		        <ui-textfield v-model.trim="match.homeScore" input-type="number" pattern="\d*" class="score" @input="match.chosen = true" endAligned outlined :disabled="match.disabled" helper-text-id="score-helper-text"></ui-textfield>
+		        <!--            <ui-textfield-helper id="score-helper-text" :valid-msg="validMsg.homeScore"></ui-textfield-helper>-->
+	        </ui-form-field>
+	        -
+	        <ui-form-field v-show="!match.disabled">
+		        <ui-textfield input-type="number" pattern="\d*" class="score" @input="match.chosen = true" v-model.trim="match.awayScore" outlined :disabled="match.disabled" required></ui-textfield>
+	        </ui-form-field>
+	        <span class="team">{{match.awayTeam}}</span>
+	        <div>
+		        <p>g. {{matchTime(match)}}</p>
+		        <p v-show="match.disabled">pula: {{match.pool}}</p>
+	        </div>
         </div>
         <span class="errorMessage" v-show="errorMessage">Wystąpił błąd połączenia z serwerem. Spróbuj później. {{errorMessage}}</span>
 		<span class="errorMessage" v-show="wrongTypings">{{wrongTypings}}</span>
