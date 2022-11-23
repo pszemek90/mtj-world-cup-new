@@ -19,6 +19,7 @@
   import Typers from './components/Typers.vue';
   import Profile from './components/Profile.vue';
   import CountryModal from './components/CountryModal.vue';
+  import AllTypings from "@/components/AllTypings.vue";
 
   export default {
     name: 'App',
@@ -42,7 +43,8 @@
       Results,
       Typers,
       Profile,
-      CountryModal
+      CountryModal,
+		AllTypings
     },
     methods: {
       openLoginModal() {
