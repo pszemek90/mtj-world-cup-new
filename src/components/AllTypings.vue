@@ -7,7 +7,11 @@
 		    <template #toggle>
 			    <div>{{ match }}</div>
 		    </template>
-		    <ui-table :data="userTypings" :thead="head" :tbody="body"></ui-table>
+		    <ui-table :data="userTypings" :thead="head" :tbody="body">
+			    <template #correct="{data}">
+				    <ui-icon class="correct" v-show="data.isCorrect">done</ui-icon>
+			    </template>
+		    </ui-table>
 	    </ui-collapse>
     </ui-collapse>
 </template>
@@ -28,13 +32,17 @@ export default {
 				align: 'center'
 			}, {
 				value: 'Wynik',
+				colspan: 2,
 				align: 'center'
 			}],
 			body: [{
-				field: 'username',
+				field:'username',
 				align: 'center'
 			}, {
 				field: 'result',
+				align: 'center'
+			}, {
+				slot: 'correct',
 				align: 'center'
 			}]
         }
@@ -70,6 +78,10 @@ export default {
 	font-weight: normal;
 	font-size: medium;
 	max-width: 500px;
+}
+
+.correct {
+	color: green;
 }
 
 </style>

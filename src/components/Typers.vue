@@ -25,6 +25,9 @@ export default {
                 value: 'Trafione',
                 align: 'center'
             }, {
+				value: 'Saldo',
+	            align: 'center'
+            }, {
 				value: 'Kraj',
 	            align: 'center'
             }],
@@ -35,6 +38,9 @@ export default {
                 field: 'correctTypings',
                 align: 'center'
             }, {
+				field: 'balance',
+	            align: 'center'
+            },{
 				slot: 'country',
 	            align: 'center'
             }]
