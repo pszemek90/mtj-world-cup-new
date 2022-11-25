@@ -1,6 +1,6 @@
 <template>
     <div class="table-container">
-        <ui-table class="table" :data="typers" :thead="head" :tbody="body">
+        <ui-table class="table" :data="typers" :thead="head" :tbody="body" fullwidth sortIconAlignEnd>
 	        <template #country="{data}">
 		        <img class="flag" :src="getCountry(data.country)" v-tooltip="`${data.country}`" :aria-describedby="data.country"/>
 	        </template>
@@ -23,9 +23,13 @@ export default {
                 align: 'center'
             }, {
                 value: 'Trafione',
+	            sort: 'desc',
+	            columnId: 'correctTypings',
                 align: 'center'
             }, {
 				value: 'Saldo',
+	            sort: 'none',
+	            columnId: 'balance',
 	            align: 'center'
             }, {
 				value: 'Kraj',
@@ -74,7 +78,7 @@ export default {
     width: 100%;
     justify-content: center;
     margin: 20px auto;
-    max-width: 400px;
+    max-width: 500px;
 }
 .table {
     width: 100%;
