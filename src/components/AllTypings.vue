@@ -1,50 +1,56 @@
 <template>
-    <ui-collapse class="collapse-first-level" v-for="(dateTypings, date) in this.typings" :key="date" with-icon ripple>
-        <template #toggle>
-            <div>{{ date }}</div>
-        </template>
-	    <ui-collapse class="collapse-second-level" v-for="(userTypings, match) in dateTypings" :key="match" with-icon ripple>
-		    <template #toggle>
-			    <div>{{ match }}</div>
-		    </template>
-		    <ui-table :data="userTypings" :thead="head" :tbody="body">
-			    <template #correct="{data}">
-				    <ui-icon class="correct" v-show="data.isCorrect">done</ui-icon>
-			    </template>
-		    </ui-table>
-	    </ui-collapse>
-    </ui-collapse>
+	<div v-for="(typingsFromDate, date) in typings" :key="date" class="my-1">
+		<button @click="toggleTypings(typingsFromDate)"
+		        class="flex align-baseline my-auto m-2 border-2 border-dark dark:border-light max-w-fit rounded-lg p-1
+						transition ease-in-out duration-500 hover:bg-dark hover:text-light dark:hover:bg-light dark:hover:text-dark">
+			<ChevronRightIcon v-if="!typingsFromDate.isShown" class="h-5 w-5"/>
+			<ChevronDownIcon v-else class="h-5 w-5"/>
+			<span>{{date}}</span>
+		</button>
+		<div v-for="(userTypings, match) in typingsFromDate" :key="match" v-if="typingsFromDate.isShown">
+			<button @click="toggleTypings(userTypings)" v-if="Array.isArray(userTypings)"
+			        class="flex align-baseline my-auto m-2 ml-6 border-2 border-dark dark:border-light max-w-fit rounded-lg p-1
+						transition ease-in-out duration-500 hover:bg-dark hover:text-light dark:hover:bg-light dark:hover:text-dark">
+				<ChevronRightIcon v-if="!userTypings.isShown" class="h-5 w-5"/>
+				<ChevronDownIcon v-else class="h-5 w-5"/>
+				<span>{{match}}</span>
+			</button>
+			<table class="m-1 ml-6" v-if="userTypings.isShown">
+				<tr class="border border-dark dark:border-light">
+					<th class="p-1">Uźytkownik</th>
+					<th class="p-1">Wynik</th>
+				</tr>
+				<tr v-for="typing in userTypings" class="border border-dark dark:border-light">
+					<td class="p-1 text-center items-center">
+						<span>{{typing.username}}</span>
+					</td>
+					<td class="p-1 flex">
+						<span>{{typing.result}}</span>
+						<CheckIcon v-if="typing.isCorrect === true" class="h-6 w-6 mx-auto"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </template>
 
 <script>
 import axios from 'axios'
 import authHeader from './../service/auth-header'
-import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'
-import BalmUI from 'balm-ui'
+
+import {CheckIcon} from '@heroicons/vue/24/solid'
+import {ChevronRightIcon, ChevronDownIcon} from '@heroicons/vue/24/outline'
 
 export default {
     name: 'AllTypings',
+	components: {
+		CheckIcon,
+		ChevronDownIcon,
+		ChevronRightIcon
+	},
     data() {
         return {
-            typings: {},
-			head: [{
-				value: 'Użytkownik',
-				align: 'center'
-			}, {
-				value: 'Wynik',
-				colspan: 2,
-				align: 'center'
-			}],
-			body: [{
-				field:'username',
-				align: 'center'
-			}, {
-				field: 'result',
-				align: 'center'
-			}, {
-				slot: 'correct',
-				align: 'center'
-			}]
+	        typings: {}
         }
     },
     methods: {
@@ -56,7 +62,11 @@ export default {
 				console.log(response.data)
                 this.typings = response.data;
             })
-        }
+        },
+	    toggleTypings(typing) {
+			console.log(typing)
+			typing.isShown = !typing.isShown
+		}
     },
     mounted() {
         this.getAllTypings()

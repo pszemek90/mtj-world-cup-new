@@ -1,111 +1,97 @@
 <template>
-    <div class="page-top-app-bar">
-        <ui-top-app-bar
-            content-selector="#content-main"
-            :type="type"
-            :title="title"
-            @nav="openDrawer = true"
-        >
-	        <template #default>
-		        <div class="title-container">
-			        <span>{{ title }}</span>
-			        <img v-show="usersCountry" class="flag" :src="country"/>
-		        </div>
-	        </template>
-            <template #toolbar="{ toolbarItemClass }">
-	            <ui-icon-button
-	                :class="toolbarItemClass"
-	                icon="login"
-	                @click="openLoginModal"
-	                v-if="!loggedIn"
-	            ></ui-icon-button>
-	            <ui-icon-button
-	                :class="toolbarItemClass"
-	                icon="logout"
-	                @click="logout"
-	                v-else
-	            ></ui-icon-button>
-            </template>
-        </ui-top-app-bar>
-
-        <ui-drawer v-model="openDrawer" type="modal">
-            <ui-drawer-header>
-                <ui-drawer-title>FIFA Katar 2022</ui-drawer-title>
-            </ui-drawer-header>
-            <ui-drawer-content>
-            <ui-list>
-                <ui-item @click="changePage('Matches')">
-                    <ui-item-text-content>Obstawianie</ui-item-text-content>
-                </ui-item>
-                <ui-item @click="changePage('MyTypings')">
-                    <ui-item-text-content>Moje typowania</ui-item-text-content>
-                </ui-item>
-                <ui-item @click="changePage('Results')">
-                    <ui-item-text-content>Wyniki meczów</ui-item-text-content>
-                </ui-item>
-                <ui-item @click="changePage('Typers')">
-                    <ui-item-text-content>Tabela typerów</ui-item-text-content>
-                </ui-item>
-	            <ui-item @click="changePage('AllTypings')">
-		            <ui-item-text-content>Wszystkie typy</ui-item-text-content>
-	            </ui-item>
-                <ui-item @click="changePage('Profile')">
-                    <ui-item-text-content>Profil</ui-item-text-content>
-                </ui-item>
-                <ui-list-divider></ui-list-divider>
-                <ui-item>
-                    <ui-item-text-content>Twój kraj: {{usersCountry}}</ui-item-text-content>
-                </ui-item>
-            </ui-list>
-            </ui-drawer-content>
-        </ui-drawer>
-    </div>
-
+	<nav class="bg-blue-700 mb-2">
+		<div class="mx-auto px-2 sm:px-6 lg:px-8">
+			<div class="relative flex h-16 items-center">
+				<div class="absolute inset-y-0 left-0 flex items-center">
+					<button class="inline-flex items-center justify-center rounded-md p-2 text-white
+						hover:ring-2 hover:ring-white" @click="open = true">
+						<span class="sr-only">Open main menu</span>
+						<Bars3Icon class="block h-6 w-6" aria-hidden="true" />
+					</button>
+					<span class="text-white font-sans text-xl pl-2 ml-2">{{title}}</span>
+				</div>
+				<div class="absolute right-0">
+					<button class="text-white">
+						<ArrowRightOnRectangleIcon v-if="loggedIn" @click="openLoginModal"  class="h-6 w-6"/>
+						<ArrowLeftOnRectangleIcon v-else class="h-6 w-6"/>
+					</button>
+				</div>
+			</div>
+		</div>
+		<Sidebar :open-sidebar="open" @close="open = false" @change-view="changeView" class="text-dark dark:text-light"/>
+	</nav>
 </template>
 
-<script>
-import BalmUI from 'balm-ui'
+<script setup>
+import {computed, ref} from 'vue';
+import { Bars3Icon, ArrowLeftOnRectangleIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline'
+import Sidebar from './Sidebar.vue'
+import {useStore} from "vuex";
 
-export default {
-    name: 'Navbar',
-    data() {
-        return {
-            type: 'standard',
-            openDrawer: false
-        };
-    },
-    computed: {
-      loggedIn() {
-        return this.$store.state.auth.status.loggedIn;
-      },
-      title() {
-        let currentUser = this.loggedIn 
-            ? this.$store.state.auth.user.username 
-            : 'nieznajomy'
-        return 'Witaj ' + currentUser;
-      },
-      usersCountry() {
-        return this.loggedIn ? this.$store.state.auth.user.country : ''
-      },
-		country() {
-	        return new URL(`../assets/icons/${this.usersCountry}.svg.webp`, import.meta.url).href
-		}
-    },
-    methods: {
-        openLoginModal() {
-            this.$emit('openLoginModal')
-        },
-        logout() {
-            this.$store.dispatch('auth/logout')
-        },
-        changePage(page) {
-            this.$emit('changeView', page)
-            this.openDrawer = false
-        }
-    }
-};
+const open = ref(false);
+const store = useStore()
+const emit = defineEmits(['changeView', 'openLoginModal'])
+const loggedIn = computed(() => {
+	return store.state.auth.status.loggedIn;
+})
+const title = computed(() => {
+	let currentUser = loggedIn
+		? store.state.auth.user.username
+		: 'nieznajomy'
+	return 'Witaj ' + currentUser;
+})
+function changeView(page) {
+	open.value = false
+	emit('changeView', page)
+}
 
+function openLoginModal() {
+	emit('openLoginModal')
+}
 </script>
+
+<!--<script>-->
+
+<!--export default {-->
+<!--    name: 'Navbar',-->
+<!--    data() {-->
+<!--        return {-->
+<!--            type: 'standard',-->
+<!--            openDrawer: false-->
+<!--        };-->
+<!--    },-->
+<!--    computed: {-->
+<!--      loggedIn() {-->
+<!--        return this.$store.state.auth.status.loggedIn;-->
+<!--      },-->
+<!--      title() {-->
+<!--        let currentUser = this.loggedIn -->
+<!--            ? this.$store.state.auth.user.username -->
+<!--            : 'nieznajomy'-->
+<!--        return 'Witaj ' + currentUser;-->
+<!--      },-->
+<!--      usersCountry() {-->
+<!--        return this.loggedIn ? this.$store.state.auth.user.country : ''-->
+<!--      },-->
+<!--		country() {-->
+<!--	        return new URL(`../assets/icons/${this.usersCountry}.svg.webp`, import.meta.url).href-->
+<!--		}-->
+<!--    },-->
+<!--    methods: {-->
+<!--        openLoginModal() {-->
+<!--            this.$emit('openLoginModal')-->
+<!--        },-->
+<!--        logout() {-->
+<!--            this.$store.dispatch('auth/logout')-->
+<!--        },-->
+<!--        changePage(page) {-->
+<!--            this.$emit('changeView', page)-->
+<!--            this.openDrawer = false-->
+<!--        }-->
+<!--    }-->
+<!--};-->
+
+<!--</script>-->
 
 <style scoped>
 .title-container {

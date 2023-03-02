@@ -2,7 +2,7 @@
   <div>
     <Navbar @open-login-modal="openLoginModal" @change-view="changeView"/>
   </div>
-  <div id="content-main">
+  <div id="content-main" class="text-dark dark:text-light">
     <component v-if="loggedIn" :is="currentView"></component>
     <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
     <LoginModal :open-modal="open" @close-login-modal="closeLoginModal"/>
@@ -52,9 +52,9 @@
       },
       closeLoginModal() {
         this.open = false
-        if(this.$store.state.auth.user.isFirstLogin) {
-          this.openCountryModal = true
-        }
+        // if(this.$store.state.auth.user.isFirstLogin) {
+        //   this.openCountryModal = true
+        // }
       },
       closeCountryModal() {
         this.openCountryModal = false

@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import BalmUI from 'balm-ui'
 
 export default {    
     name: 'Country',
