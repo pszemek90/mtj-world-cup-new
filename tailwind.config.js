@@ -13,7 +13,7 @@ module.exports = {
         colors: {
             light: "#cbd5e1", // slate-300
             dark: "#1f2937", // gray-800
-            "vtd-primary": colors.sky,
+            "vtd-primary": colors.slate,
             "vtd-secondary": colors.gray
         }
     },

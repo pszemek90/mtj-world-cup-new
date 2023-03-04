@@ -28,7 +28,7 @@
 							class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
 						>
 							<DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
-								Sign in to your account
+								Zaloguj się
 							</DialogTitle>
 							<form class="mt-8 space-y-6" action="#" method="POST">
 								<input type="hidden" name="remember" value="true" />
@@ -70,7 +70,7 @@
 									        border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white
 									        hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500
 									        focus:ring-offset-2">
-										Sign in
+										Zaloguj się
 									</button>
 								</div>
 							</form>

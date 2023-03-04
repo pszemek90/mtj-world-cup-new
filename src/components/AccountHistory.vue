@@ -5,7 +5,8 @@
 				<th class="col-span-5">Zdarzenie</th>
 				<th>Zmiana</th>
 			</tr>
-			<tr v-for="entry in history" :key="entry.timestamp" class="grid grid-cols-6 text-center">
+			<tr v-for="entry in history" :key="entry.timestamp"
+			    class="grid grid-cols-6 text-center border-b border-dark dark:border-light last:border-b-0">
 				<td class="col-span-5 grid grid-cols-6">
 					<span>{{entry.timestamp}}</span>
 					<span class="col-span-5 text-left">{{entry.message}}</span>
@@ -20,30 +21,30 @@
 		<ChevronLeftIcon @click="previousPage"
 			class="h-6 w-6 border border-dark rounded dark:border-light m-0.5 cursor-pointer"/>
 		<button v-if="firstPage < currentPage" @click="goToPage($event)"
-		        class="h-6 w-6 border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
+		        class="h-6 w-6 min-w-fit border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
 			{{ firstPage }}
 		</button>
 		<button v-if="currentPage - firstPage > 2"
-		        class="h-6 w-6 rounded text-dark dark:text-light dark:bg-dark m-0.5 cursor-default">
+		        class="h-6 w-6 min-w-fit  rounded text-dark dark:text-light dark:bg-dark m-0.5 cursor-default">
 			...
 		</button>
 		<button v-if="currentPage - 1 > firstPage" @click="goToPage($event)"
-		        class="h-6 w-6 border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
+		        class="h-6 w-6 min-w-fit  border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
 			{{ currentPage - 1}}
 		</button>
-		<button class="h-6 w-6 border border-dark rounded text-light bg-dark dark:text-dark dark:bg-light dark:border-light m-0.5">
+		<button class="h-6 w-6 min-w-fit border border-dark rounded text-light bg-dark dark:text-dark dark:bg-light dark:border-light m-0.5">
 			{{ currentPage }}
 		</button>
 		<button v-if="currentPage + 1 < lastPage" @click="goToPage($event)"
-		        class="h-6 w-6 border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
+		        class="h-6 w-6 min-w-fit border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
 			{{ currentPage + 1 }}
 		</button>
 		<button v-if="lastPage - currentPage > 2"
-		        class="h-6 w-6 rounded text-dark dark:text-light dark:bg-dark m-0.5 cursor-default">
+		        class="h-6 w-6 min-w-fit rounded text-dark dark:text-light dark:bg-dark m-0.5 cursor-default">
 			...
 		</button>
 		<button v-if="lastPage > currentPage" @click="goToPage($event)"
-		        class="h-6 w-6 border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
+		        class="h-6 w-6 min-w-fit border border-dark rounded text-dark dark:text-light dark:bg-dark dark:border-light m-0.5">
 			{{ lastPage }}
 		</button>
 		<ChevronRightIcon @click="nextPage"
@@ -65,44 +66,26 @@ export default {
 	data() {
 		return {
 			firstPage: 1,
-			currentPage: 10,
-			lastPage: 10,
+			currentPage: 1,
 			history: [],
-			head: [{
-				value: 'Zdarzenie',
-				colspan: 2,
-				align: 'center'
-			},{
-				value: 'Zmiana',
-				align: 'center'
-			}],
-			body: [{
-				field: 'timestamp',
-				align: 'left'
-			}, {
-				slot: 'message',
-				align: 'left'
-			}, {
-				field: 'difference',
-				align: 'center'
-			}],
 			errorMessage: '',
 			page: 1,
 			total: 100
 		}
 	},
 	computed: {
-		totalPages() {
+		lastPage() {
 			return Math.floor(this.total / 10) + 1;
 		}
 	},
 	methods: {
 		getUserHistory() {
 			this.errorMessage = ''
+			this.history = []
 			axios.get(this.$store.state.origin + ':8080/users/history',{
 				params: {
 					userId: this.$store.state.auth.user.id,
-					pageNumber: this.page
+					pageNumber: this.currentPage
 				},
 				headers: authHeader()
 			}).then((response) => {
@@ -116,14 +99,17 @@ export default {
 			this.currentPage < this.lastPage
 				? this.currentPage = this.currentPage + 1
 				: this.currentPage = this.lastPage
+			this.getUserHistory()
 		},
 		previousPage() {
 			this.currentPage > this.firstPage
 				? this.currentPage = this.currentPage - 1
 				: this.currentPage = this.firstPage
+			this.getUserHistory()
 		},
 		goToPage(event) {
 			this.currentPage = parseInt(event.srcElement.innerText)
+			this.getUserHistory()
 		}
 	},
 	mounted() {

@@ -52,9 +52,9 @@
       },
       closeLoginModal() {
         this.open = false
-        // if(this.$store.state.auth.user.isFirstLogin) {
-        //   this.openCountryModal = true
-        // }
+        if(this.$store.state.auth.user.isFirstLogin) {
+          this.openCountryModal = true
+        }
       },
       closeCountryModal() {
         this.openCountryModal = false

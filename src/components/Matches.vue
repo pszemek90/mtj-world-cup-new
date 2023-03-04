@@ -1,18 +1,10 @@
 <template>
 <!--  <div>-->
     <span class="overall-pool" v-show="isToday">Dzisiejsza pula: {{overallPool}}</span>
-	<div class="w-1/4 mx-auto my-2 min-w-[200px]">
-		<vue-tailwind-datepicker :formatter="formatter" as-single v-model="date"/>
+	<div class="mx-auto my-2 w-fit">
+		<vue-tailwind-datepicker v-model="dateValue" as-single :formatter="formatter"
+			class="text-center"/>
 	</div>
-<!--    <div class="datepicker">-->
-<!--      <ui-datepicker-->
-<!--        v-model="date"-->
-<!--        :config="config"-->
-<!--        placeholder="Select Date..."-->
-<!--        outlined-->
-<!--        toggle>-->
-<!--      </ui-datepicker>-->
-<!--    </div>-->
 <!--    <ui-form type="|" action-align="center">-->
 <!--      <template #default="{subitemClass, actionClass}">-->
 <!--        <div class="match" v-for="match in matches" :key="match.id">-->
@@ -60,149 +52,164 @@
 <!--  </ui-snackbar>-->
 </template>
 
-<script>
-import axios from 'axios';
-import authHeader from './../service/auth-header';
+<script setup>
+import VueTailwindDatepicker from 'vue-tailwind-datepicker'
+import dayjs from 'dayjs'
+import {ref} from 'vue'
 
-  export default {
-    name: 'Matches',
-    components: {
-    },
-    data() {
-      return {
-        matches:[],
-        config: {
-          defaultDate: 'today',
-          minDate: 'today',
-          locale: {
-            "firstDayOfWeek": 1
-          }
-        },
-        date: 'today',
-	      formatter: {
-			date: 'DD-MM-YYYY',
-		      month: 'MMM'
-	      },
-        typings: {
-          matches: [],
-          userId: 0,
-          date: 'today'
-        },
-        errorMessage:'',
-        sendTypingsModalOpened: false,
-        showSuccessSnackbar: false,
-        showErrorSnackbar: false,
-        actionType: 1,
-        overallPool: '',
-        // validations,
-        validMsg: {},
-		wrongTypings: '',
-		sentMatches: []
-      }
-    },
-    computed: {
-      loggedIn() {
-        return this.$store.state.auth.status.loggedIn;
-      },
-      chosenMatches() {
-        return this.matches.filter(match => match.chosen)
-      },
-      isToday() {
-        let rawCalendarDate = new Date(this.date)
-        let calendarDate = rawCalendarDate.getFullYear() + '-' + rawCalendarDate.getMonth() + '-' + rawCalendarDate.getDate()
-        let rawToday = new Date()
-        let today = rawToday.getFullYear() + '-' + rawToday.getMonth() + '-' + rawToday.getDate()
-        return calendarDate === today
-      }
-    },
-    methods: {
-      getMatches() {
-        axios.get(this.$store.state.origin + ':8080/matches/today', {
-          params: {
-            date: this.date
-          },
-          headers: authHeader() 
-        })
-          .then((response) => {
-            this.matches = response.data
-			this.matches.forEach(match => match.homeScore = '')
-			this.matches.forEach(match => match.awayScore = '')
-            this.markPastMatches()
-            this.errorMessage = ''
-          })
-          .catch((error) => {
-            this.errorMessage = error.message
-          })
-      },
-      matchTime(match) {
-        function padTo2Digits(num) {
-          return String(num).padStart(2, '0')
-        }
-        let date = new Date(match.date)
-	      return padTo2Digits(date.getHours()) + ':' + padTo2Digits(date.getMinutes());
-      },
-      showSendTypingModal() {
-	      this.wrongTypings = ''
-	      if(this.chosenMatches.length === 0) {
-			  this.wrongTypings = 'Musisz wysłać przynajmniej jeden mecz.'
-	      } else if(this.chosenMatches.filter(match => match.homeScore === '').length > 0
-		      || this.chosenMatches.filter(match => match.awayScore === '').length > 0) {
-			  this.wrongTypings = 'Nie możesz wysłać pustego wyniku'
-	      } else {
-			  this.sentMatches = this.chosenMatches.filter(match => Date.parse(match.date) > Date.now())
-		      this.sendTypingsModalOpened = true
-	      }
-        // }
-      },
-      sendTyping(result) {
-        if(result) {
-          this.typings.userId = this.$store.state.auth.user.id
-          axios.post(this.$store.state.origin + ':8080/matches/typings', {
-            "matches": this.sentMatches,
-            "userId": this.typings.userId
-          }, {
-            headers: authHeader()
-          }).then((response) => {
-            if(response) {
-              this.showSuccessSnackbar = true
-            }
-          }).catch((error) => {
-            this.showErrorSnackbar = true
-          })
-        }
-        this.sendTypingsModalOpened = false
-      },
-      markPastMatches() {
-        for(let i = 0; i < this.matches.length; i++) {
-          let matchDate = new Date(this.matches[i].date).getTime()
-          let now = Date.now()
-          if(matchDate < now) {
-            this.matches[i].disabled = true
-          } else {
-            this.matches[i].disabled = false
-          }
-        }
-      },
-      getOverallPool() {
-        axios.get(this.$store.state.origin + ':8080/overallPool', {
-          headers: authHeader()
-        }).then((response) => {
-          this.overallPool = response.data.overallPool + ' zł'
-        }).catch((error) => {
-          this.overallPool = 'Nie udało się pobrać puli'
-        })
-      }
-    },
-    watch: {
-      date() {
-        if(this.isToday) {
-          this.getOverallPool()
-        }
-        this.getMatches()
-      }
-    }
-  }
+const dateValue = ref(dayjs().format('YYYY-MM-DD'))
+const formatter = {
+	date: 'YYYY-MM-DD',
+	month: 'MMM'
+}
 </script>
+
+<!--<script>-->
+<!--import axios from 'axios';-->
+<!--import authHeader from './../service/auth-header';-->
+<!--import VueTailwindDatepicker from 'vue-tailwind-datepicker'-->
+<!--import {ref} from "vue";-->
+
+<!--export default {-->
+<!--    name: 'Matches',-->
+<!--    components: {-->
+<!--		VueTailwindDatepicker-->
+<!--    },-->
+<!--    data() {-->
+<!--      return {-->
+<!--        matches:[],-->
+<!--        config: {-->
+<!--          defaultDate: 'today',-->
+<!--          minDate: 'today',-->
+<!--          locale: {-->
+<!--            "firstDayOfWeek": 1-->
+<!--          }-->
+<!--        },-->
+<!--        dateValue: '2023-03-04',-->
+<!--	      formatter: {-->
+<!--			date: 'DD-MM-YYYY',-->
+<!--		      month: 'MMM'-->
+<!--	      },-->
+<!--        typings: {-->
+<!--          matches: [],-->
+<!--          userId: 0,-->
+<!--          date: 'today'-->
+<!--        },-->
+<!--        errorMessage:'',-->
+<!--        sendTypingsModalOpened: false,-->
+<!--        showSuccessSnackbar: false,-->
+<!--        showErrorSnackbar: false,-->
+<!--        actionType: 1,-->
+<!--        overallPool: '',-->
+<!--        // validations,-->
+<!--        validMsg: {},-->
+<!--		wrongTypings: '',-->
+<!--		sentMatches: []-->
+<!--      }-->
+<!--    },-->
+<!--    computed: {-->
+<!--      loggedIn() {-->
+<!--        return this.$store.state.auth.status.loggedIn;-->
+<!--      },-->
+<!--      chosenMatches() {-->
+<!--        return this.matches.filter(match => match.chosen)-->
+<!--      },-->
+<!--      isToday() {-->
+<!--        let rawCalendarDate = new Date(this.date)-->
+<!--        let calendarDate = rawCalendarDate.getFullYear() + '-' + rawCalendarDate.getMonth() + '-' + rawCalendarDate.getDate()-->
+<!--        let rawToday = new Date()-->
+<!--        let today = rawToday.getFullYear() + '-' + rawToday.getMonth() + '-' + rawToday.getDate()-->
+<!--        return calendarDate === today-->
+<!--      }-->
+<!--    },-->
+<!--    methods: {-->
+<!--      getMatches() {-->
+<!--        axios.get(this.$store.state.origin + ':8080/matches/today', {-->
+<!--          params: {-->
+<!--            date: this.date-->
+<!--          },-->
+<!--          headers: authHeader() -->
+<!--        })-->
+<!--          .then((response) => {-->
+<!--            this.matches = response.data-->
+<!--			this.matches.forEach(match => match.homeScore = '')-->
+<!--			this.matches.forEach(match => match.awayScore = '')-->
+<!--            this.markPastMatches()-->
+<!--            this.errorMessage = ''-->
+<!--          })-->
+<!--          .catch((error) => {-->
+<!--            this.errorMessage = error.message-->
+<!--          })-->
+<!--      },-->
+<!--      matchTime(match) {-->
+<!--        function padTo2Digits(num) {-->
+<!--          return String(num).padStart(2, '0')-->
+<!--        }-->
+<!--        let date = new Date(match.date)-->
+<!--	      return padTo2Digits(date.getHours()) + ':' + padTo2Digits(date.getMinutes());-->
+<!--      },-->
+<!--      showSendTypingModal() {-->
+<!--	      this.wrongTypings = ''-->
+<!--	      if(this.chosenMatches.length === 0) {-->
+<!--			  this.wrongTypings = 'Musisz wysłać przynajmniej jeden mecz.'-->
+<!--	      } else if(this.chosenMatches.filter(match => match.homeScore === '').length > 0-->
+<!--		      || this.chosenMatches.filter(match => match.awayScore === '').length > 0) {-->
+<!--			  this.wrongTypings = 'Nie możesz wysłać pustego wyniku'-->
+<!--	      } else {-->
+<!--			  this.sentMatches = this.chosenMatches.filter(match => Date.parse(match.date) > Date.now())-->
+<!--		      this.sendTypingsModalOpened = true-->
+<!--	      }-->
+<!--        // }-->
+<!--      },-->
+<!--      sendTyping(result) {-->
+<!--        if(result) {-->
+<!--          this.typings.userId = this.$store.state.auth.user.id-->
+<!--          axios.post(this.$store.state.origin + ':8080/matches/typings', {-->
+<!--            "matches": this.sentMatches,-->
+<!--            "userId": this.typings.userId-->
+<!--          }, {-->
+<!--            headers: authHeader()-->
+<!--          }).then((response) => {-->
+<!--            if(response) {-->
+<!--              this.showSuccessSnackbar = true-->
+<!--            }-->
+<!--          }).catch((error) => {-->
+<!--            this.showErrorSnackbar = true-->
+<!--          })-->
+<!--        }-->
+<!--        this.sendTypingsModalOpened = false-->
+<!--      },-->
+<!--      markPastMatches() {-->
+<!--        for(let i = 0; i < this.matches.length; i++) {-->
+<!--          let matchDate = new Date(this.matches[i].date).getTime()-->
+<!--          let now = Date.now()-->
+<!--          if(matchDate < now) {-->
+<!--            this.matches[i].disabled = true-->
+<!--          } else {-->
+<!--            this.matches[i].disabled = false-->
+<!--          }-->
+<!--        }-->
+<!--      },-->
+<!--      getOverallPool() {-->
+<!--        axios.get(this.$store.state.origin + ':8080/overallPool', {-->
+<!--          headers: authHeader()-->
+<!--        }).then((response) => {-->
+<!--          this.overallPool = response.data.overallPool + ' zł'-->
+<!--        }).catch((error) => {-->
+<!--          this.overallPool = 'Nie udało się pobrać puli'-->
+<!--        })-->
+<!--      }-->
+<!--    },-->
+<!--    watch: {-->
+<!--      date() {-->
+<!--        if(this.isToday) {-->
+<!--          this.getOverallPool()-->
+<!--        }-->
+<!--        this.getMatches()-->
+<!--      }-->
+<!--    }-->
+<!--  }-->
+<!--</script>-->
 
 <style scoped>
 .match {

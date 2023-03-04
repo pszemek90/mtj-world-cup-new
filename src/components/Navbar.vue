@@ -9,11 +9,12 @@
 						<Bars3Icon class="block h-6 w-6" aria-hidden="true" />
 					</button>
 					<span class="text-white font-sans text-xl pl-2 ml-2">{{title}}</span>
+					<img v-if="userCountry" :src="country" class="ml-4 h-3/4 border border-black"/>
 				</div>
 				<div class="absolute right-0">
 					<button class="text-white">
-						<ArrowRightOnRectangleIcon v-if="loggedIn" @click="openLoginModal"  class="h-6 w-6"/>
-						<ArrowLeftOnRectangleIcon v-else class="h-6 w-6"/>
+						<ArrowRightOnRectangleIcon v-if="loggedIn" @click="logout"  class="h-6 w-6"/>
+						<ArrowLeftOnRectangleIcon v-else @click="openLoginModal" class="h-6 w-6"/>
 					</button>
 				</div>
 			</div>
@@ -35,10 +36,17 @@ const loggedIn = computed(() => {
 	return store.state.auth.status.loggedIn;
 })
 const title = computed(() => {
-	let currentUser = loggedIn
+	console.log('logged in: ', loggedIn.value)
+	let currentUser = loggedIn.value
 		? store.state.auth.user.username
 		: 'nieznajomy'
 	return 'Witaj ' + currentUser;
+})
+const userCountry = computed( () => {
+	return loggedIn.value ? store.state.auth.user.country : ''
+})
+const country = computed( () => {
+	return new URL(`../assets/icons/${userCountry.value}.svg.webp`, import.meta.url).href
 })
 function changeView(page) {
 	open.value = false
@@ -47,6 +55,10 @@ function changeView(page) {
 
 function openLoginModal() {
 	emit('openLoginModal')
+}
+
+function logout() {
+	store.dispatch('auth/logout')
 }
 </script>
 

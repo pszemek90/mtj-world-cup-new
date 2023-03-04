@@ -45,6 +45,9 @@
 												<a class="mx-auto py-2 text-lg">Profil</a>
 											</li>
 										</ul>
+										<div class="mt-2">
+											Twój kraj: {{ userCountry }}
+										</div>
 									</div>
 									<div class="ml-4">
 										<Switch
@@ -74,21 +77,29 @@
 </template>
 
 <script setup>
-import {ref, watchEffect} from 'vue'
+import {computed, ref, watchEffect} from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot, Switch } from '@headlessui/vue'
 import {SunIcon, MoonIcon} from '@heroicons/vue/24/solid'
+import {useStore} from "vuex";
 
 const props = defineProps({
 	openSidebar: Boolean
 })
 const emit = defineEmits(['changeView'])
 const open = ref(false)
+const store = useStore()
 const darkMode = ref(false)
 watchEffect(() => open.value = props.openSidebar)
 function changeView(page) {
 	open.value = false;
 	emit('changeView', page)
 }
+const loggedIn = computed(() => {
+	return store.state.auth.status.loggedIn;
+})
+const userCountry = computed( () => {
+	return loggedIn.value ? store.state.auth.user.country : ''
+})
 function toggleDarkMode() {
 	darkMode.value = !darkMode.value
 	if(darkMode.value) {
