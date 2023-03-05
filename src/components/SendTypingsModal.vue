@@ -51,7 +51,6 @@ function closeModal() {
 }
 
 watch(() => props.showModal,() => {
-	console.log('show modal', props.showModal)
 	open.value = props.showModal
 	typings.value = props.typings
 })

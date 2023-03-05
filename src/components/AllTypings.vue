@@ -34,64 +34,32 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios'
 import authHeader from './../service/auth-header'
 
 import {CheckIcon} from '@heroicons/vue/24/solid'
 import {ChevronRightIcon, ChevronDownIcon} from '@heroicons/vue/24/outline'
+import {onMounted, ref} from "vue";
+import {useStore} from "vuex";
 
-export default {
-    name: 'AllTypings',
-	components: {
-		CheckIcon,
-		ChevronDownIcon,
-		ChevronRightIcon
-	},
-    data() {
-        return {
-	        typings: {}
-        }
-    },
-    methods: {
-        getAllTypings() {
-            axios.get(this.$store.state.origin + ':8080/typings/allTypings', {
-                headers: authHeader()
-            })
-            .then((response) => {
-				console.log(response.data)
-                this.typings = response.data;
-            })
-        },
-	    toggleTypings(typing) {
-			console.log(typing)
-			typing.isShown = !typing.isShown
-		}
-    },
-    mounted() {
-        this.getAllTypings()
-    }
+const typings = ref(null)
+const store = useStore()
+
+function getAllTypings() {
+	axios.get(store.state.origin + ':8080/typings/allTypings', {
+		headers: authHeader()
+	})
+		.then((response) => {
+			typings.value = response.data;
+		})
 }
-
+function toggleTypings(typing) {
+	typing.isShown = !typing.isShown
+}
+onMounted(() => {
+	getAllTypings()
+})
 </script>
 
-<style scoped>
-.collapse-first-level {
-	margin: 5px 0 0 20px;
-	font-weight: bold;
-	font-size: large;
-	max-width: 500px;
-}
-
-.collapse-second-level {
-	margin: 5px 0 0 20px;
-	font-weight: normal;
-	font-size: medium;
-	max-width: 500px;
-}
-
-.correct {
-	color: green;
-}
-
-</style>
+<style scoped></style>
