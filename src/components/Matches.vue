@@ -14,7 +14,7 @@
 			       type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
 			-
 			<input v-model="match.awayScore" v-show="!match.disabled" @input="match.chosen = true"
-			       type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16 no-arrow-number-field"/>
+			       type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
 			<span class="text-center w-24">{{ match.awayTeam }}</span>
 			<div>
 				<p>g. {{matchTime(match)}}</p>
