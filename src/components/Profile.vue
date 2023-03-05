@@ -77,101 +77,69 @@
 	</TransitionRoot>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios'
 import authHeader from './../service/auth-header'
 import AccountHistory from "@/components/AccountHistory.vue";
 import {TransitionRoot, Dialog, DialogPanel, TransitionChild, DialogTitle} from "@headlessui/vue";
+import {computed, onMounted, ref} from "vue";
+import {useStore} from "vuex";
 
-export default {
-    name: 'Profile',
-	components: {
-		AccountHistory,
-		DialogPanel,
-		TransitionChild,
-		TransitionRoot,
-		DialogTitle,
-		Dialog
-	},
-    data() {
-        return {
-            balance: 0,
-	        open: false,
-	        oldPassword: '',
-	        newPassword: '',
-	        retypePassword: '',
-	        message: '',
-	        actionType: 1,
-	        showErrorSnack: false,
-	        isOpen: false
-        }
-    },
-    computed: {
-        loggedIn() {
-            return this.$store.state.auth.status.loggedIn;
-        }
-    },
-    methods: {
-        getUserBalance() {
-            if(this.loggedIn) {
-                axios.get(this.$store.state.origin + ':8080/users/balance', {
-                    params: {
-                        userId: this.$store.state.auth.user.id
-                    },
-                    headers: authHeader()
-                }).then((response) => {
-                    this.balance = response.data
-                })
-            }
-        },
-	    changePassword() {
-			this.message = ''
-			if(this.newPassword !== this.retypePassword) {
-				this.message += 'Nowe i powtórzone hasło nie są identyczne.'
-			}
-			if(!this.message) {
-				axios.post(this.$store.state.origin + ':8080/users/changePassword', {
-					userId: this.$store.state.auth.user.id,
-					newPassword: this.newPassword,
-					oldPassword: this.oldPassword
-				}, {
-					headers: authHeader()
-				}).then((response) => {
-					if(response.status === 200) {
-						this.$store.dispatch('auth/logout')
-					} else {
-						this.showErrorSnack = true
-					}
-				}).catch((error) => {
-					if(error.response.status === 401) {
-						this.message = 'Stare hasło jest niepoprawne.'
-					} else {
-						this.showErrorSnack = true
-					}
-				})
-			}
-	    }
-    },
-    mounted() {
-        this.getUserBalance()
-    }
+const balance = ref(0)
+const open = ref(false)
+const oldPassword = ref('')
+const newPassword = ref('')
+const retypePassword = ref('')
+const message = ref('')
+const isOpen = ref(false)
+const store = useStore()
+
+const loggedIn = computed(() => {
+	return store.state.auth.status.loggedIn
+})
+
+function getUserBalance() {
+	if(loggedIn) {
+		axios.get(store.state.origin + ':8080/users/balance', {
+			params: {
+				userId: store.state.auth.user.id
+			},
+			headers: authHeader()
+		}).then((response) => {
+			balance.value = response.data
+		})
+	}
 }
+function changePassword() {
+	message.value = ''
+	if(newPassword.value !== retypePassword.value) {
+		message.value += 'Nowe i powtórzone hasło nie są identyczne.'
+	}
+	if(!message.value) {
+		axios.post(store.state.origin + ':8080/users/changePassword', {
+			userId: store.state.auth.user.id,
+			newPassword: newPassword.value,
+			oldPassword: oldPassword.value
+		}, {
+			headers: authHeader()
+		}).then((response) => {
+			if(response.status === 200) {
+				store.dispatch('auth/logout')
+			}
+		}).catch((error) => {
+			if(error.response.status === 401) {
+				message.value = 'Stare hasło jest niepoprawne.'
+			}
+		})
+	}
+}
+
+onMounted(() => {
+	getUserBalance()
+})
+
 </script>
 
 <style scoped>
-.balance {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 20px auto;
-    font-size: 1.5rem;
-}
-.error-message {
-	color: red
-}
 
-.change-password {
-	display: flex;
-	margin: 0 auto;
-}
 </style>

@@ -61,57 +61,6 @@ function logout() {
 }
 </script>
 
-<!--<script>-->
-
-<!--export default {-->
-<!--    name: 'Navbar',-->
-<!--    data() {-->
-<!--        return {-->
-<!--            type: 'standard',-->
-<!--            openDrawer: false-->
-<!--        };-->
-<!--    },-->
-<!--    computed: {-->
-<!--      loggedIn() {-->
-<!--        return this.$store.state.auth.status.loggedIn;-->
-<!--      },-->
-<!--      title() {-->
-<!--        let currentUser = this.loggedIn -->
-<!--            ? this.$store.state.auth.user.username -->
-<!--            : 'nieznajomy'-->
-<!--        return 'Witaj ' + currentUser;-->
-<!--      },-->
-<!--      usersCountry() {-->
-<!--        return this.loggedIn ? this.$store.state.auth.user.country : ''-->
-<!--      },-->
-<!--		country() {-->
-<!--	        return new URL(`../assets/icons/${this.usersCountry}.svg.webp`, import.meta.url).href-->
-<!--		}-->
-<!--    },-->
-<!--    methods: {-->
-<!--        openLoginModal() {-->
-<!--            this.$emit('openLoginModal')-->
-<!--        },-->
-<!--        logout() {-->
-<!--            this.$store.dispatch('auth/logout')-->
-<!--        },-->
-<!--        changePage(page) {-->
-<!--            this.$emit('changeView', page)-->
-<!--            this.openDrawer = false-->
-<!--        }-->
-<!--    }-->
-<!--};-->
-
-<!--</script>-->
-
 <style scoped>
-.title-container {
-	display: flex;
-	align-items: center;
-}
-.flag {
-	width: 60px;
-	height: 40px;
-	margin: 10px 10px 10px 30px;
-}
+
 </style>
