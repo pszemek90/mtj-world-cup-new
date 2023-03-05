@@ -36,7 +36,6 @@ const loggedIn = computed(() => {
 	return store.state.auth.status.loggedIn;
 })
 const title = computed(() => {
-	console.log('logged in: ', loggedIn.value)
 	let currentUser = loggedIn.value
 		? store.state.auth.user.username
 		: 'nieznajomy'
