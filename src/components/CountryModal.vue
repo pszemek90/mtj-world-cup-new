@@ -47,42 +47,27 @@
 <!--    </ui-dialog>-->
 
 </template>
-
-<script>
-
+<script setup>
 import {TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle} from "@headlessui/vue";
+import {ref, watch} from "vue";
+import {useStore} from "vuex";
 
-export default {    
-    name: 'Country',
-	components:{
-		TransitionChild,
-		TransitionRoot,
-		Dialog,
-		DialogTitle,
-		DialogPanel
-	},
-    props: {
-        openModal: Boolean
-    },
-    data() {
-        return {
-            open: false,
-            usersCountry: ''
-        }
-    },
-    methods: {
-        closeModal() {
-            this.open = false
-            this.$emit('closeCountryModal')
-        }
-    },
-    watch: {
-        openModal() {
-            this.usersCountry = this.$store.state.auth.user.country
-            this.open = this.openModal
-        }
-    }
+const props = defineProps({
+	openModal: Boolean
+})
+const emit = defineEmits(['closeCountryModal'])
+const open = ref(false)
+const usersCountry = ref('')
+const store = useStore()
+
+function closeModal() {
+	open.value = false
+	emit('closeCountryModal')
 }
+watch(() => props.openModal, () => {
+	usersCountry.value = store.state.auth.user.country
+	open.value = props.openModal
+})
 </script>
 
 <style scoped>
