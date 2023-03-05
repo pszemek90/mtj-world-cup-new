@@ -83,57 +83,40 @@
 
 </template>
 
-<script>
+<script setup>
 import {Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild} from '@headlessui/vue';
+import {ref, watchEffect} from "vue";
+import {useStore} from "vuex";
 
-export default {
-    name: 'Login',
-	components: {
-		Dialog,
-		DialogPanel,
-		DialogTitle,
-		TransitionChild,
-		TransitionRoot
-	},
-    props: {
-        openModal: Boolean
-    },
-    data() {
-        return {
-            open: false,
-            message: "",
-            user: {
-                username: "",
-                password: ""
-            }
-        }
-    },
-    watch: {
-        openModal() {
-            this.open = this.openModal
-        }
-    },
-    methods: {
-        handleLogin(user) {
-            //todo add loading
-            this.$store.dispatch("auth/login", user).then(
-                () => {
-                    this.$emit('closeLoginModal')
-                },
-                (error) => {
-                    this.message = (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                        error.message ||
-                        error.toString();
-                }
-            )
-        },
-	    closeModal() {
-			this.$emit('closeLoginModal')
-	    }
-    }
+const props = defineProps({
+	openModal: Boolean
+})
+const emit = defineEmits(['closeLoginModal'])
+const open = ref(false)
+const message = ref('')
+const store = useStore()
+const user = ref({
+	username: "",
+	password: ""
+})
+function handleLogin(user) {
+	store.dispatch("auth/login", user).then(
+		() => {
+			emit('closeLoginModal')
+		},
+		(error) => {
+			message.value = (error.response &&
+					error.response.data &&
+					error.response.data.message) ||
+				error.message ||
+				error.toString();
+		}
+	)
 }
+function closeModal() {
+	emit('closeLoginModal')
+}
+watchEffect(() => open.value = props.openModal)
 </script>
 
 <style scoped>
