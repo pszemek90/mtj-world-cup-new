@@ -19,55 +19,33 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios'
 import authHeader from './../service/auth-header'
+import {onMounted, ref} from "vue";
+import {useStore} from "vuex";
 
-export default {
-    name: 'Typers',
-    data() {
-        return {
-	        typers: []
-        }
-    },
-    methods: {
-        getTypers() {
-            axios.get(this.$store.state.origin + ':8080/typings/typerScores', {
-                headers: authHeader()
-            })
-            .then((response) => {
-                this.typers = response.data
-            })
-        },
-	    getCountry(countryString) {
-		    if(countryString){
-			    return new URL(`../assets/icons/${countryString}.svg.webp`, import.meta.url).href
-		    }
-	    }
-    },
-    mounted() {
-        this.getTypers()
-    }
+const typers = ref([])
+const store = useStore()
+
+function getTypers() {
+	axios.get(store.state.origin + ':8080/typings/typerScores', {
+		headers: authHeader()
+	})
+		.then((response) => {
+			typers.value = response.data
+		})
 }
-
+function getCountry(countryString) {
+	if(countryString){
+		return new URL(`../assets/icons/${countryString}.svg.webp`, import.meta.url).href
+	}
+}
+onMounted(() => {
+	getTypers()
+})
 </script>
 
 <style scoped>
-.table-container {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    margin: 20px auto;
-    max-width: 500px;
-}
-.table {
-    width: 100%;
-}
-.flag {
-	width: 60px;
-	height: 40px;
-	border: 1px solid black;
-	display: flex;
-	margin: auto;
-}
+
 </style>
