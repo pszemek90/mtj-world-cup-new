@@ -52,82 +52,57 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios'
 import authHeader from "@/service/auth-header";
 import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/vue/24/outline'
+import {computed, onMounted, ref} from "vue";
+import {useStore} from "vuex";
 
-export default {
-	name: "AccountHistory",
-	components: {
-		ChevronLeftIcon,
-		ChevronRightIcon
-	},
-	data() {
-		return {
-			firstPage: 1,
-			currentPage: 1,
-			history: [],
-			errorMessage: '',
-			page: 1,
-			total: 100
-		}
-	},
-	computed: {
-		lastPage() {
-			return Math.floor(this.total / 10) + 1;
-		}
-	},
-	methods: {
-		getUserHistory() {
-			this.errorMessage = ''
-			this.history = []
-			axios.get(this.$store.state.origin + ':8080/users/history',{
-				params: {
-					userId: this.$store.state.auth.user.id,
-					pageNumber: this.currentPage
-				},
-				headers: authHeader()
-			}).then((response) => {
-				this.history = response.data.history
-				this.total = response.data.total
-			}).catch((error) => {
-				this.errorMessage = 'Nie udało się pobrać historii użytkownika.'
-			})
+const firstPage = ref(1)
+const currentPage = ref(1)
+const history = ref([])
+const errorMessage = ref('')
+const total = ref(100)
+const store = useStore()
+const lastPage = computed(() => {
+	return Math.floor(total.value / 10) + 1
+})
+function getUserHistory() {
+	errorMessage.value = ''
+	history.value = []
+	axios.get(store.state.origin + ':8080/users/history',{
+		params: {
+			userId: store.state.auth.user.id,
+			pageNumber: currentPage.value
 		},
-		nextPage() {
-			this.currentPage < this.lastPage
-				? this.currentPage = this.currentPage + 1
-				: this.currentPage = this.lastPage
-			this.getUserHistory()
-		},
-		previousPage() {
-			this.currentPage > this.firstPage
-				? this.currentPage = this.currentPage - 1
-				: this.currentPage = this.firstPage
-			this.getUserHistory()
-		},
-		goToPage(event) {
-			this.currentPage = parseInt(event.srcElement.innerText)
-			this.getUserHistory()
-		}
-	},
-	mounted() {
-		this.getUserHistory()
-	}
+		headers: authHeader()
+	}).then((response) => {
+		history.value = response.data.history
+		total.value = response.data.total
+	}).catch((error) => {
+		errorMessage.value = 'Nie udało się pobrać historii użytkownika.'
+	})
 }
+function nextPage() {
+	currentPage.value < lastPage.value
+		? currentPage.value = currentPage.value + 1
+		: currentPage.value = lastPage.value
+	getUserHistory()
+}
+function previousPage() {
+	currentPage.value > firstPage.value
+		? currentPage.value = currentPage.value - 1
+		: currentPage.value = firstPage.value
+	getUserHistory()
+}
+function goToPage(event) {
+	currentPage.value = parseInt(event.srcElement.innerText)
+	getUserHistory()
+}
+onMounted(() => {
+	getUserHistory()
+})
 </script>
 
-<style scoped>
-.table-container {
-	margin: 20px;
-}
-.table {
-	width: 100%;
-}
-.message-cell {
-	width: 100%;
-	white-space: normal;
-	min-width: 200px;
-}
-</style>
+<style scoped></style>
