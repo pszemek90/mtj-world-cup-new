@@ -3,8 +3,9 @@
     <Navbar @open-login-modal="openLoginModal" @change-view="changeView"/>
   </div>
   <div id="content-main" class="text-dark dark:text-light">
-    <component v-if="loggedIn" :is="currentView"></component>
-    <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
+<!--    <component v-if="loggedIn" :is="currentView"></component>-->
+<!--    <span class="login-message" v-else>Zaloguj się aby kontynuować</span>-->
+	  <component :is="currentView"/>
     <LoginModal :open-modal="open" @close-login-modal="closeLoginModal"/>
     <CountryModal :open-modal="openCountryModal" @close-country-modal="closeCountryModal"/>
   </div>
@@ -20,13 +21,14 @@
   import Profile from './components/Profile.vue';
   import CountryModal from './components/CountryModal.vue';
   import AllTypings from "@/components/AllTypings.vue";
+  import TestComponent from './components/TestComponent.vue';
 
   export default {
     name: 'App',
     data() {
       return {
         open: false,
-        currentView: 'Matches',
+        currentView: 'TestComponent',
         openCountryModal: false
       }
     },
@@ -44,7 +46,8 @@
       Typers,
       Profile,
       CountryModal,
-		AllTypings
+		AllTypings,
+	    TestComponent
     },
     methods: {
       openLoginModal() {
