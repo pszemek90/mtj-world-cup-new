@@ -10,7 +10,7 @@
 
 <script setup>
 
-import {ref} from "vue";
+import {inject, ref} from "vue";
 import axios from "axios";
 import { CognitoIdentityProviderClient, InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
 import {fromCognitoIdentityPool} from '@aws-sdk/credential-providers';
@@ -21,9 +21,10 @@ const token = ref('')
 const username = ref('')
 const pass = ref('')
 const REGION = 'eu-central-1'
+const baseUrl = inject('baseUrl')
 
 async function getMatches() {
-	axios.get('https://d3r1f197x306df.cloudfront.net/matches', {
+	axios.get(baseUrl + '/matches', {
 		headers: {
 			Authorization: 'Bearer ' + token.value
 		}
@@ -51,9 +52,7 @@ async function login() {
 	};
 	const command = new InitiateAuthCommand(input);
 	const response = await client.send(command);
-	console.log('response', response)
 	token.value = response.AuthenticationResult.IdToken
-	console.log('token: ', token.value)
 }
 
 </script>
