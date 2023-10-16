@@ -3,9 +3,8 @@
     <Navbar @open-login-modal="openLoginModal" @change-view="changeView"/>
   </div>
   <div id="content-main" class="text-dark dark:text-light">
-<!--    <component v-if="loggedIn" :is="currentView"></component>-->
-<!--    <span class="login-message" v-else>Zaloguj się aby kontynuować</span>-->
-	  <component :is="currentView"/>
+    <component v-if="store.user.isLoggedIn" :is="currentView"></component>
+    <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
     <LoginModal :open-modal="open" @close-login-modal="closeLoginModal"/>
     <CountryModal :open-modal="openCountryModal" @close-country-modal="closeCountryModal"/>
   </div>
@@ -22,6 +21,7 @@
   import CountryModal from './components/CountryModal.vue';
   import AllTypings from "@/components/AllTypings.vue";
   import TestComponent from './components/TestComponent.vue';
+  import {useUserStore} from "@/store/userStore";
 
   export default {
     name: 'App',
@@ -29,7 +29,8 @@
       return {
         open: false,
         currentView: 'TestComponent',
-        openCountryModal: false
+        openCountryModal: false,
+        store: useUserStore(),
       }
     },
     computed: {
