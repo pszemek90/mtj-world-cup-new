@@ -1,10 +1,4 @@
-<template>
-	<div v-for="match in matches">
-		<div>{{match.homeTeam}}</div>
-	</div>
-	<input type="text" v-model="username"/>
-	<input type="password" v-model="pass"/>
-	<button @click="login">Login</button>
+<template>	
 	<button @click.prevent="getMatches">Get Matches</button>
 </template>
 
@@ -12,49 +6,23 @@
 
 import {inject, ref} from "vue";
 import axios from "axios";
-import { CognitoIdentityProviderClient, InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
-import {fromCognitoIdentityPool} from '@aws-sdk/credential-providers';
+import {useUserStore} from "@/store/userStore";
 
 const name = 'TestComponent'
 const matches = ref([])
-const token = ref('')
-const username = ref('')
-const pass = ref('')
-const REGION = 'eu-central-1'
 const baseUrl = inject('baseUrl')
+const userStore = useUserStore()
 
 async function getMatches() {
 	axios.get(baseUrl + '/matches', {
 		headers: {
-			Authorization: 'Bearer ' + token.value
+			Authorization: 'Bearer ' + userStore.user.idToken
 		}
 	})
 		.then((response) => {
 			matches.value = response.data
 		})
 }
-
-async function login() {
-	const client = new CognitoIdentityProviderClient({
-		region: REGION,
-		credentials: fromCognitoIdentityPool({
-			clientConfig: {region: REGION},
-			identityPoolId: 'eu-central-1:b0882b74-ef50-420a-8a22-9c3db676d322'
-		})
-	})
-	const input = { // InitiateAuthRequest
-		AuthFlow: "USER_PASSWORD_AUTH", // required
-		AuthParameters: {
-			"PASSWORD": pass.value,
-			"USERNAME": username.value
-		},
-		ClientId: "ue9kvl53mbn4ni52bqgcpatn2" // required
-	};
-	const command = new InitiateAuthCommand(input);
-	const response = await client.send(command);
-	token.value = response.AuthenticationResult.IdToken
-}
-
 </script>
 
 <style scoped>
