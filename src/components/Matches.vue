@@ -39,6 +39,7 @@ import dayjs from 'dayjs'
 import {computed, ref, watch} from 'vue'
 import {useStore} from "vuex";
 import SendTypingsModal from "@/components/SendTypingsModal.vue";
+import {requestService} from "@/service/request-service"
 
 const dateValue = ref(dayjs().format('YYYY-MM-DD'))
 const formatter = {
@@ -70,22 +71,16 @@ function markPastMatches() {
 }
 
 function getMatches() {
-	axios.get(store.state.origin + ':8080/matches/today', {
-		params: {
-			date: dateValue.value
-		},
-		headers: authHeader()
+	requestService.get('/matches/' + dateValue.value)
+	.then((response) => {
+		console.log('response from api: ', response.data)
+		matches.value = response.data.matches
+		markPastMatches()
+		errorMessage.value = ''
 	})
-		.then((response) => {
-			matches.value = response.data
-			matches.value.forEach(match => match.homeScore = '')
-			matches.value.forEach(match => match.awayScore = '')
-			markPastMatches()
-			errorMessage.value = ''
-		})
-		.catch((error) => {
-			errorMessage.value = error.message
-		})
+	.catch((error) => {
+		errorMessage.value = error.message
+	})
 }
 
 const isToday = computed(() => {
@@ -110,8 +105,7 @@ function matchTime(match) {
   function padTo2Digits(num) {
     return String(num).padStart(2, '0')
   }
-  let date = new Date(match.date)
- return padTo2Digits(date.getHours()) + ':' + padTo2Digits(date.getMinutes());
+ return padTo2Digits(match.startTime[3]) + ':' + padTo2Digits(match.startTime[4]);
 }
 
 function showSendTypingModal() {
