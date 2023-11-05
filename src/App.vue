@@ -28,7 +28,7 @@
     data() {
       return {
         open: false,
-        currentView: 'TestComponent',
+        currentView: 'Matches',
         openCountryModal: false,
         store: useUserStore(),
       }
