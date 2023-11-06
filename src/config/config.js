@@ -4,9 +4,9 @@ const environments = {
     local: {
         baseUrl: 'http://localhost:3000'
     },
-    prod: {
+    production: {
         baseUrl: await parameterService.getParameter('mtj-url')
     }
 }
 
-export const config = environments[process.env.NODE_ENV || 'prod']
+export const config = environments[process.env.NODE_ENV || 'production']
