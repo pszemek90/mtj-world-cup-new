@@ -7,7 +7,7 @@ const baseUrl = config.baseUrl
 class RequestService {
     async get(url) {
         const userStore = useUserStore()
-        return await axios.get(baseUrl + "/prod/api" + url, {
+        return await axios.get(baseUrl + url, {
             headers: {
                 Authorization: 'Bearer ' + userStore.user.idToken
             }

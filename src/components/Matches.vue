@@ -105,7 +105,7 @@ function matchTime(match) {
   function padTo2Digits(num) {
     return String(num).padStart(2, '0')
   }
- return padTo2Digits(match.startTime[3]) + ':' + padTo2Digits(match.startTime[4]);
+ return padTo2Digits(match.startTime[0]) + ':' + padTo2Digits(match.startTime[1]);
 }
 
 function showSendTypingModal() {

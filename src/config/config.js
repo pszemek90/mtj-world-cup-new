@@ -2,7 +2,7 @@ import parameterService from '@/service/parameter-service'
 
 const environments = {
     local: {
-        baseUrl: 'http://localhost:3000'
+        baseUrl: 'http://localhost:3000/api'
     },
     production: {
         baseUrl: await parameterService.getParameter('mtj-url')
