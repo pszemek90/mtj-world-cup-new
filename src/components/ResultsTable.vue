@@ -40,6 +40,7 @@ import axios from "axios";
 import authHeader from "@/service/auth-header";
 import {onMounted} from "vue";
 import {useStore} from "vuex";
+import {requestService} from "@/service/request-service"
 
 const props = defineProps({
 	type: String
@@ -62,11 +63,12 @@ async function getTypingsForUser() {
 	})
 	return response.data
 }
-async function getFinishedMatches() {
-	const response = await axios.get(store.state.origin + ':8080/results', {
-		headers: authHeader()
+function getFinishedMatches() {
+	requestService.get('/results')
+	.then((response) => {
+		console.log('Results returned: ', response.data)
+		typings.value = response.data
 	})
-	return response.data
 }
 
 
@@ -74,7 +76,7 @@ onMounted(async () => {
 	if(props.type === 'typings'){
 		typings.value = await getTypingsForUser()
 	} else if (props.type === 'results') {
-		typings.value = await getFinishedMatches()
+		getFinishedMatches()
 	}
 })
 </script>
