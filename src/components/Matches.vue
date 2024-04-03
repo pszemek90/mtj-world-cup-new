@@ -28,7 +28,7 @@
 			Wyślij
 		</button>
 	</form>
-	<SendTypingsModal :show-modal="sendTypingsModalOpened" :typings="sentMatches"/>
+	<SendTypingsModal :show-modal="sendTypingsModalOpened" :typings="sentMatches" @sendTypes='sendTypes'/>
 </template>
 
 <script setup>
@@ -58,16 +58,28 @@ const chosenMatches = computed(() => {
 	return matches.value.filter(match => match.chosen)
 })
 
+function sendTypes() {
+	requestService.post('/matches/' + dateValue.value, sentMatches.value)
+}
+
 function markPastMatches() {
 	for (let i = 0; i < matches.value.length; i++) {
-		let matchDate = new Date(matches.value[i].date).getTime()
+		let match = matches.value[i]
+		let matchDateInMillis = parseDate(match)
 		let now = Date.now()
-		if (matchDate < now) {
+		if (matchDateInMillis < now) {
 			matches.value[i].disabled = true
 		} else {
 			matches.value[i].disabled = false
 		}
 	}
+}
+
+function parseDate(match) {
+	let matchDate = new Date(match.date);
+	matchDate.setHours(match.startTime[0])
+	matchDate.setMinutes(match.startTime[1])
+	return matchDate.getTime()
 }
 
 function getMatches() {
@@ -116,7 +128,7 @@ function showSendTypingModal() {
 		|| chosenMatches.value.filter(match => match.awayScore === '').length > 0) {
 		wrongTypings.value = 'Nie możesz wysłać pustego wyniku'
 	} else {
-		sentMatches.value = chosenMatches.value.filter(match => Date.parse(match.date) > Date.now())
+		sentMatches.value = chosenMatches.value.filter(match => parseDate(match) > Date.now())
 		sendTypingsModalOpened.value = true
 	}
 }

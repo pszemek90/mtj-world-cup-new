@@ -45,8 +45,10 @@ import {ref, watch, watchEffect} from "vue";
 const props = defineProps(['typings', 'showModal'])
 const typings = ref([])
 const open = ref(false)
+const emit = defineEmits(['sendTypes'])
 
 function closeModal() {
+	emit('sendTypes')
 	open.value = false
 }
 
