@@ -53,16 +53,14 @@ function toggleTypings(typing) {
 	typing.isShown = !typing.isShown
 }
 
-async function getTypingsForUser() {
-	let userId = store.state.auth.user.id
-	const response = await axios.get(store.state.origin + ':8080/typings', {
-		params: {
-			userId: userId
-		},
-		headers: authHeader()
+function getTypingsForUser() {
+	requestService.get('/typings')
+	.then((response) => {
+		console.log('Typings returned: ', response.data)
+		typings.value = response.data
 	})
-	return response.data
 }
+
 function getFinishedMatches() {
 	requestService.get('/results')
 	.then((response) => {
@@ -74,7 +72,7 @@ function getFinishedMatches() {
 
 onMounted(async () => {
 	if(props.type === 'typings'){
-		typings.value = await getTypingsForUser()
+		getTypingsForUser()
 	} else if (props.type === 'results') {
 		getFinishedMatches()
 	}
