@@ -36,7 +36,7 @@ import axios from "axios"
 import authHeader from "@/service/auth-header";
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 import dayjs from 'dayjs'
-import {computed, ref, watch} from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import {useStore} from "vuex";
 import SendTypingsModal from "@/components/SendTypingsModal.vue";
 import {requestService} from "@/service/request-service"
@@ -137,6 +137,10 @@ watch(dateValue, () => {
 	if (isToday) {
 		getOverallPool()
 	}
+	getMatches()
+})
+
+onMounted(() => {
 	getMatches()
 })
 </script>
