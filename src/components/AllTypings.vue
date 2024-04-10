@@ -17,12 +17,12 @@
 			</button>
 			<table class="m-1 ml-6" v-if="userTypings.isShown">
 				<tr class="border border-dark dark:border-light">
-					<th class="p-1">Uźytkownik</th>
+					<th class="p-1">Użytkownik</th>
 					<th class="p-1">Wynik</th>
 				</tr>
 				<tr v-for="typing in userTypings" class="border border-dark dark:border-light">
 					<td class="p-1 text-center items-center">
-						<span>{{typing.username}}</span>
+						<span>{{typing.user}}</span>
 					</td>
 					<td class="p-1 flex">
 						<span>{{typing.result}}</span>
@@ -35,21 +35,16 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import authHeader from './../service/auth-header'
 
 import {CheckIcon} from '@heroicons/vue/24/solid'
 import {ChevronRightIcon, ChevronDownIcon} from '@heroicons/vue/24/outline'
 import {onMounted, ref} from "vue";
-import {useStore} from "vuex";
+import {requestService} from "@/service/request-service";
 
 const typings = ref(null)
-const store = useStore()
 
 function getAllTypings() {
-	axios.get(store.state.origin + ':8080/typings/allTypings', {
-		headers: authHeader()
-	})
+	requestService.get('/all-typings')
 		.then((response) => {
 			typings.value = response.data;
 		})
