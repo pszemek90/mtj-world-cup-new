@@ -32,12 +32,9 @@
 </template>
 
 <script setup>
-import axios from "axios"
-import authHeader from "@/service/auth-header";
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 import dayjs from 'dayjs'
 import {computed, onMounted, ref, watch} from 'vue'
-import {useStore} from "vuex";
 import SendTypingsModal from "@/components/SendTypingsModal.vue";
 import {requestService} from "@/service/request-service"
 
@@ -52,7 +49,6 @@ const overallPool = ref('')
 const wrongTypings = ref('')
 const sentMatches = ref([])
 const sendTypingsModalOpened = ref(false)
-const store = useStore()
 
 const chosenMatches = computed(() => {
 	return matches.value.filter(match => match.chosen)
@@ -104,11 +100,11 @@ const isToday = computed(() => {
 })
 
 function getOverallPool() {
-	axios.get(store.state.origin + ':8080/overallPool', {
-		headers: authHeader()
-	}).then((response) => {
-		overallPool.value = response.data.overallPool + ' zł'
-	}).catch((error) => {
+	requestService.get('/overall-pool')
+	.then((response) => {
+		overallPool.value = response.data + ' zł'
+	})
+	.catch((error) => {
 		overallPool.value = 'Nie udało się pobrać puli'
 	})
 }
@@ -141,6 +137,9 @@ watch(dateValue, () => {
 })
 
 onMounted(() => {
+	if (isToday) {
+		getOverallPool()
+	}
 	getMatches()
 })
 </script>
