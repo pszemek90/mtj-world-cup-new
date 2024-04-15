@@ -27,22 +27,20 @@
 import {computed, ref} from 'vue';
 import { Bars3Icon, ArrowLeftOnRectangleIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline'
 import Sidebar from './Sidebar.vue'
-import {useStore} from "vuex";
+import { useUserStore } from "@/store/userStore"
 
 const open = ref(false);
-const store = useStore()
+const store = useUserStore()
 const emit = defineEmits(['changeView', 'openLoginModal'])
 const loggedIn = computed(() => {
-	return store.state.auth.status.loggedIn;
+	return store.user.isLoggedIn;
 })
 const title = computed(() => {
-	let currentUser = loggedIn.value
-		? store.state.auth.user.username
-		: 'nieznajomy'
+	let currentUser = store.user.username
 	return 'Witaj ' + currentUser;
 })
 const userCountry = computed( () => {
-	return loggedIn.value ? store.state.auth.user.country : ''
+	return loggedIn.value ? '' : ''
 })
 const country = computed( () => {
 	return new URL(`../assets/icons/${userCountry.value}.svg.webp`, import.meta.url).href
@@ -57,7 +55,7 @@ function openLoginModal() {
 }
 
 function logout() {
-	store.dispatch('auth/logout')
+	store.logout()
 }
 </script>
 

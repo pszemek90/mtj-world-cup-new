@@ -3,17 +3,21 @@ import {ref} from "vue";
 
 export const useUserStore = defineStore('user', () => {
     const initialUser = JSON.parse(localStorage.getItem('user'))
-    const user = ref(initialUser || {
+    const emptyUser = {
         isLoggedIn: false,
         email: '',
-        idToken: ''
-    })
+        idToken: '',
+        username: 'nieznajomy'
+    }
+    const user = ref(initialUser || emptyUser)
 
     function login(userToLog) {
         user.value = userToLog
+        localStorage.setItem('user', JSON.stringify(userToLog))
     }
     function logout() {
-        user.value = null
+        localStorage.removeItem('user')
+        user.value = emptyUser
     }
 
     function test() {

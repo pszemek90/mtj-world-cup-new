@@ -2,17 +2,11 @@ import axios from 'axios';
 import {
     CognitoIdentityProviderClient,
     InitiateAuthCommand,
-    RespondToAuthChallengeCommand
+    RespondToAuthChallengeCommand,
+    GetUserCommand
 } from "@aws-sdk/client-cognito-identity-provider";
 import {fromCognitoIdentityPool} from "@aws-sdk/credential-providers";
-import {useUserStore} from "@/store/userStore";
 
-const origin = window.location.origin;
-const colonCount = origin.match(/:/g).length;
-const originWOPortNo = colonCount == 1 
-    ? origin
-    : origin.slice(0, origin.lastIndexOf(':'));
-const API_URL = originWOPortNo + ':8080/auth/';
 const REGION = 'eu-central-1'
 const client = new CognitoIdentityProviderClient({
     region: REGION,
@@ -37,17 +31,16 @@ class AuthService {
         const command = new InitiateAuthCommand(input);
         return client.send(command)
     }
-    
 
-    logout() {
-        localStorage.removeItem('user');
+    async getUser(token) {
+        const input = {
+            "AccessToken": token
+        }
+        const command = new GetUserCommand(input)
+        return await client.send(command)
     }
 
     respondToNewPasswordChallenge(authResponse, username, newPassword) {
-        console.log('authResponse: ', authResponse)
-        console.log('authResponse session: ', authResponse.Session)
-        console.log('username: ', username)
-        console.log('newPassword', newPassword)
         const input = {
             ClientId: clientId,
             ChallengeName: 'NEW_PASSWORD_REQUIRED',
