@@ -3,7 +3,9 @@ import {
     CognitoIdentityProviderClient,
     InitiateAuthCommand,
     RespondToAuthChallengeCommand,
-    GetUserCommand
+    GetUserCommand,
+    ConfirmForgotPasswordCommand,
+    ForgotPasswordCommand
 } from "@aws-sdk/client-cognito-identity-provider";
 import {fromCognitoIdentityPool} from "@aws-sdk/credential-providers";
 
@@ -38,6 +40,26 @@ class AuthService {
         }
         const command = new GetUserCommand(input)
         return await client.send(command)
+    }
+
+    async confirmResetPassword(email, verificationCode, newPassword) {
+        const input = {
+            ClientId: clientId,
+            ConfirmationCode: verificationCode,
+            Username: email,
+            Password: newPassword
+        }
+        const command = new ConfirmForgotPasswordCommand(input)
+        return client.send(command)
+    }
+
+    async resetPassword(email) {
+        const input = {
+            ClientId: clientId,
+            Username: email
+        }
+        const command = new ForgotPasswordCommand(input)
+        return client.send(command)
     }
 
     respondToNewPasswordChallenge(authResponse, username, newPassword) {

@@ -1,73 +1,60 @@
 <template>
   <div>
-    <Navbar @open-login-modal="openLoginModal" @change-view="changeView"/>
+    <Snackbar :open-snackbar="openSnackbar">
+      {{ snackbarMessage }}
+    </Snackbar>
+    <Navbar @open-login-modal="openLoginModal" @change-view="changeView" />
   </div>
   <div id="content-main" class="text-dark dark:text-light">
-    <component v-if="store.user.isLoggedIn" :is="currentView"></component>
+    <component v-if="loggedIn" :is="currentView"></component>
     <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
-    <LoginModal :open-modal="open" @close-login-modal="closeLoginModal"/>
-    <CountryModal :open-modal="openCountryModal" @close-country-modal="closeCountryModal"/>
+    <LoginModal :open-modal="open" @close-login-modal="closeLoginModal" @open-snackbar="openSnackbarWithMessage"/>
+    <CountryModal :open-modal="openCountryModal" @close-country-modal="closeCountryModal" />
   </div>
 </template>
 
-<script>
-  import Matches from './components/Matches.vue';
-  import LoginModal from './components/LoginModal.vue';
-  import Navbar from './components/Navbar.vue';
-  import MyTypings from './components/MyTypings.vue';
-  import Results from './components/Results.vue';
-  import Typers from './components/Typers.vue';
-  import Profile from './components/Profile.vue';
-  import CountryModal from './components/CountryModal.vue';
-  import AllTypings from "@/components/AllTypings.vue";
-  import TestComponent from './components/TestComponent.vue';
-  import {useUserStore} from "@/store/userStore";
+<script setup>
+import LoginModal from './components/LoginModal.vue';
+import Navbar from './components/Navbar.vue';
+import CountryModal from './components/CountryModal.vue';
+import { useUserStore } from "@/store/userStore";
+import Snackbar from './components/Snackbar.vue';
+import Matches from './components/Matches.vue';
+import { ref, computed, shallowRef } from 'vue';
 
-  export default {
-    name: 'App',
-    data() {
-      return {
-        open: false,
-        currentView: 'Matches',
-        openCountryModal: false,
-        store: useUserStore(),
-      }
-    },
-    computed: {
-      loggedIn() {
-        return this.$store.state.auth.status.loggedIn;
-      }
-    },
-    components: {
-      Matches,
-      LoginModal,
-      Navbar,
-      MyTypings,
-      Results,
-      Typers,
-      Profile,
-      CountryModal,
-		AllTypings,
-	    TestComponent
-    },
-    methods: {
-      openLoginModal() {
-        this.open = true
-      },
-      closeLoginModal() {
-        this.open = false
-        if(this.$store.state.auth.user.isFirstLogin) {
-          this.openCountryModal = true
-        }
-      },
-      closeCountryModal() {
-        this.openCountryModal = false
-      },
-      changeView(view) {
-        this.currentView = view
-      }
-    }
+const open = ref(false);
+const currentView = shallowRef(Matches);
+const openCountryModal = ref(false);
+const openSnackbar = ref(false);
+const snackbarMessage = ref('');
+
+const store = useUserStore();
+
+const loggedIn = computed(() => {
+  return store.user.isLoggedIn;
+})
+
+function openSnackbarWithMessage(message) {
+  snackbarMessage.value = message;
+  openSnackbar.value = true;
+}
+
+function openLoginModal() {
+  open.value = true;
+}
+
+function closeLoginModal() {
+  open.value = false;
+  if (store.user.isFirstLogin) {
+    openCountryModal.value = true;
   }
+}
+function closeCountryModal() {
+  openCountryModal.value = false;
+}
+function changeView(view) {
+  currentView.value = view;
+}
 </script>
 
 <style scoped>
@@ -76,7 +63,10 @@
   display: flex;
   justify-content: center;
 }
-*, *:before, *:after {
-	box-sizing: border-box;
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
 }
 </style>

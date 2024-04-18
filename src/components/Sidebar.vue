@@ -20,27 +20,27 @@
 									</div>
 									<div class="relative mt-6 flex-1 px-4 sm:px-6">
 										<ul>
-											<li @click="changeView('Matches')"
+											<li @click="changeView(Matches)"
 												class="flex border-b-2 cursor-pointer ripple-bg-white dark:ripple-bg-dark">
 												<a class="mx-auto py-2 text-lg">Obstawianie</a>
 											</li>
-											<li @click="changeView('MyTypings')"
+											<li @click="changeView(MyTypings)"
 												class="flex border-b-2 cursor-pointer ripple-bg-white dark:ripple-bg-dark">
 												<a class="mx-auto py-2 text-lg">Moje typowania</a>
 											</li>
-											<li @click="changeView('Results')"
+											<li @click="changeView(Results)"
 												class="flex border-b-2 cursor-pointer ripple-bg-white dark:ripple-bg-dark">
 												<a class="mx-auto py-2 text-lg">Wyniki meczów</a>
 											</li>
-											<li @click="changeView('Typers')"
+											<li @click="changeView(Typers)"
 												class="flex border-b-2 cursor-pointer ripple-bg-white dark:ripple-bg-dark">
 												<a class="mx-auto py-2 text-lg">Tabela typerów</a>
 											</li>
-											<li @click="changeView('AllTypings')"
+											<li @click="changeView(AllTypings)"
 												class="flex border-b-2 cursor-pointer ripple-bg-white dark:ripple-bg-dark">
 												<a class="mx-auto py-2 text-lg">Wszystkie typy</a>
 											</li>
-											<li @click="changeView('Profile')"
+											<li @click="changeView(Profile)"
 												class="flex border-b-2 cursor-pointer ripple-bg-white dark:ripple-bg-dark">
 												<a class="mx-auto py-2 text-lg">Profil</a>
 											</li>
@@ -80,6 +80,12 @@
 import {computed, ref, watchEffect} from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot, Switch } from '@headlessui/vue'
 import {SunIcon, MoonIcon} from '@heroicons/vue/24/solid'
+import Profile from "./Profile.vue";
+import Matches from "./Matches.vue";
+import MyTypings from "./MyTypings.vue";
+import Results from "./Results.vue";
+import Typers from "./Typers.vue";
+import AllTypings from "./AllTypings.vue";
 import {useStore} from "vuex";
 
 const props = defineProps({

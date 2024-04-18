@@ -22,34 +22,34 @@
 									<div>
 										<label for="email-address" class="sr-only">Email address</label>
 										<input id="email-address" name="email" type="email" autocomplete="email"
-											required="" v-model="user.email" class="relative block w-full appearance-none rounded-none rounded-t-md border
+											required v-model="user.email" class="relative block w-full appearance-none rounded-none rounded-t-md border
 										       border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10
-										       focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-											placeholder="Email address" />
+										       focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm" placeholder="Email" />
 									</div>
-									<div v-show="!isNewPasswordChallenge">
+									<div v-show="!isNewPasswordChallenge && !isResetPassword">
 										<label for="password" class="sr-only">Password</label>
 										<input id="password" name="password" type="password"
 											autocomplete="current-password" required="" v-model="user.password" class="relative block w-full appearance-none rounded-none
 										       rounded-b-md border border-gray-300 px-3 py-2 text-gray-900
 										       placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none
-										       focus:ring-indigo-500 sm:text-sm" placeholder="Password" />
+										       focus:ring-indigo-500 sm:text-sm" placeholder="Hasło" />
 									</div>
-									<div v-show="isNewPasswordChallenge">
+									<div v-show="isNewPasswordChallenge || isResetPassword">
 										<label for="new-password" class="sr-only">New password</label>
 										<input id="new-password" name="new-password" type="password" required=""
 											v-model="newPassword" class="relative block w-full appearance-none rounded-none border
 										       border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10
 										       focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-											placeholder="New password" />
+											placeholder="Nowe hasło" />
 									</div>
-									<div v-show="isNewPasswordChallenge">
+									<div v-show="isNewPasswordChallenge || isResetPassword">
 										<label for="retype-password" class="sr-only">Retype password</label>
 										<input id="retype-password" name="retype-password" type="password" required=""
 											v-model="retypePassword" class="relative block w-full appearance-none rounded-none
 										       rounded-b-md border border-gray-300 px-3 py-2 text-gray-900
 										       placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none
-										       focus:ring-indigo-500 sm:text-sm" placeholder="Retype password" />
+										       focus:ring-indigo-500 sm:text-sm"
+											:placeholder="isNewPasswordChallenge ? 'Powtórz hasło' : 'Kod weryfikacyjny'" />
 									</div>
 								</div>
 
@@ -62,11 +62,16 @@
 									</div>
 
 									<div class="text-sm">
-										<a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot
-											your password?</a>
+										<button type="submit" @click.prevent="resetPassword(user)"
+											class="font-medium text-indigo-600 hover:text-indigo-500">Nie pamiętam
+											hasła</button>
 									</div>
 								</div>
-
+								<div class="text-red-600" v-if="errors.length > 0">
+									<ul>
+										<li v-for="error in errors">{{ error }}</li>
+									</ul>
+								</div>
 								<div>
 									<button type="submit" @click.prevent="handleLogin(user)" class="group relative flex w-full justify-center rounded-md border
 									        border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white
@@ -94,9 +99,10 @@ import { useUserStore } from "@/store/userStore";
 const props = defineProps({
 	openModal: Boolean
 })
-const emit = defineEmits(['closeLoginModal'])
+const emit = defineEmits(['closeLoginModal', 'openSnackbar'])
 const open = ref(false)
 const isNewPasswordChallenge = ref(false)
+const isResetPassword = ref(false)
 const newPassword = ref('')
 const retypePassword = ref('')
 const userStore = useUserStore()
@@ -105,27 +111,64 @@ const user = ref({
 	password: ""
 })
 const authResponse = ref(null)
+const errors = ref([])
+
 async function handleLogin(user) {
 	if (isNewPasswordChallenge.value) {
 		authService.respondToNewPasswordChallenge(authResponse.value, user.email, newPassword.value)
-			.then((response) => {
-				const currentUser = await setCurrentUser(user, response)
-				userStore.login(currentUser)
-				emit('closeLoginModal')
+			.then(async (response) => {
+				isNewPasswordChallenge.value = false
+				await logUser(user, response)
+			})
+	} else if (isResetPassword.value) {
+		authService.confirmResetPassword(user.email, retypePassword.value, newPassword.value)
+			.then(() => {
+				isResetPassword.value = false
 			})
 	} else {
-		authService.login(user).then(async (response) => {
-			console.log('handle login response: ', response)
-			if (response.ChallengeName === 'NEW_PASSWORD_REQUIRED') {
-				isNewPasswordChallenge.value = true
-				authResponse.value = response
-			} else {
-				const currentUser = await setCurrentUser(user, response)
-				userStore.login(currentUser)
-				emit('closeLoginModal')
-			}
-		})
+		authService.login(user)
+			.then(async (response) => {
+				console.log('handle login response: ', response)
+				if (response.ChallengeName === 'NEW_PASSWORD_REQUIRED') {
+					isNewPasswordChallenge.value = true
+					authResponse.value = response
+				} else {
+					await logUser(user, response)
+					emit('openSnackbar', 'Zalogowano')
+				}
+			})
+			.catch((error) => {
+				if (error.toString().includes('PasswordResetRequiredException')) {
+					isResetPassword.value = true
+				}
+				console.log('error: ', error)
+			})
 	}
+}
+
+async function logUser(user, response) {
+	const currentUser = await setCurrentUser(user, response)
+	userStore.login(currentUser)
+	emit('closeLoginModal')
+}
+
+function resetPassword(user) {
+	errors.value = []
+	console.log('reset password')
+	if (!user.email) {
+		console.log('no email')
+		errors.value.push('Podaj adres email')
+		return
+	}
+	authService.resetPassword(user.email)
+		.then(() => {
+			console.log('reset password success')
+			isResetPassword.value = true
+		})
+		.catch((error) => {
+			console.log('reset password error: ', error)
+			errors.value.push('Nie udało się zresetować hasła')
+		})
 }
 
 async function setCurrentUser(user, response) {
