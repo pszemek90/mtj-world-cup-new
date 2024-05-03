@@ -20,21 +20,16 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import authHeader from './../service/auth-header'
 import {onMounted, ref} from "vue";
-import {useStore} from "vuex";
+import {requestService} from "../service/request-service";
 
 const typers = ref([])
-const store = useStore()
 
 function getTypers() {
-	axios.get(store.state.origin + ':8080/typings/typerScores', {
-		headers: authHeader()
+	requestService.get('/typers')
+	.then((response) => {
+		typers.value = response.data
 	})
-		.then((response) => {
-			typers.value = response.data
-		})
 }
 function getCountry(countryString) {
 	if(countryString){
