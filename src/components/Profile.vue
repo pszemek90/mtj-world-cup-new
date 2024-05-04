@@ -2,7 +2,7 @@
 	<div class="text-2xl text-center m-4">
 		Stan konta: {{ balance }} zł
 	</div>
-	<!-- <AccountHistory /> -->
+	<AccountHistory />
 </template>
 
 <script setup>
