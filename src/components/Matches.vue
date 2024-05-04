@@ -1,5 +1,5 @@
 <template>
-    <div class="text-2xl text-center" v-show="isToday">Dzisiejsza pula: {{overallPool}}</div>
+    <div class="text-2xl text-center" v-show="isToday">Dzisiejsza pula: {{todayPool}}</div>
 	<div class="mx-auto my-2 w-fit">
 		<vue-tailwind-datepicker v-model="dateValue" as-single :formatter="formatter"
 			class="text-center"/>
@@ -45,7 +45,7 @@ const formatter = {
 }
 const matches = ref([])
 const errorMessage = ref('')
-const overallPool = ref('')
+const todayPool = ref('')
 const wrongTypings = ref('')
 const sentMatches = ref([])
 const sendTypingsModalOpened = ref(false)
@@ -99,13 +99,13 @@ const isToday = computed(() => {
 	return calendarDate === today
 })
 
-function getOverallPool() {
-	requestService.get('/overall-pool')
+function getTodayPool() {
+	requestService.get('/today-pool')
 	.then((response) => {
-		overallPool.value = response.data + ' zł'
+		todayPool.value = response.data + ' zł'
 	})
 	.catch((error) => {
-		overallPool.value = 'Nie udało się pobrać puli'
+		todayPool.value = 'Nie udało się pobrać puli'
 	})
 }
 
@@ -131,14 +131,14 @@ function showSendTypingModal() {
 
 watch(dateValue, () => {
 	if (isToday) {
-		getOverallPool()
+		getTodayPool()
 	}
 	getMatches()
 })
 
 onMounted(() => {
 	if (isToday) {
-		getOverallPool()
+		getTodayPool()
 	}
 	getMatches()
 })
