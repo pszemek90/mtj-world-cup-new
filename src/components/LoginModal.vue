@@ -95,6 +95,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } fro
 import { ref, watchEffect } from "vue";
 import { authService } from '@/service/auth-service'
 import { useUserStore } from "@/store/userStore";
+import { fcmTokenService } from '../service/fcm-token-service';
 
 const props = defineProps({
 	openModal: Boolean
@@ -134,6 +135,7 @@ async function handleLogin(user) {
 					authResponse.value = response
 				} else {
 					await logUser(user, response)
+					fcmTokenService.getMessagingToken()
 					emit('openSnackbar', 'Zalogowano')
 				}
 			})

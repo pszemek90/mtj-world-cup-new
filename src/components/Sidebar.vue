@@ -49,6 +49,24 @@
 											Twój kraj: {{ userCountry }}
 										</div>
 									</div>
+									<div class="ml-4 flex">
+										<span class="flex items-center">
+											Powiadomienia: 
+										</span>
+										<Switch
+											@click="toggleNotifications"
+											class="relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full
+												border-2 border-transparent transition-colors duration-200 ease-in-out
+												focus:outline-none focus-visible:ring-2 focus-visible:ring-white
+												focus-visible:ring-opacity-75 bg-dark dark:bg-light">
+											<span aria-hidden="true"
+												:class="notifications ? 'translate-x-7' : 'translate-x-0'"
+												class="pointer-events-none inline-block h-6 w-6 transform rounded-full
+												bg-white shadow-lg ring-0 transition duration-500 ease-in-out
+												dark:bg-dark">
+											</span>
+										</Switch>
+									</div>
 									<div class="ml-4">
 										<Switch
 											@click="toggleDarkMode"
@@ -56,7 +74,6 @@
 												border-2 border-transparent transition-colors duration-200 ease-in-out
 												focus:outline-none focus-visible:ring-2 focus-visible:ring-white
 												focus-visible:ring-opacity-75 bg-dark dark:bg-light">
-											<span class="sr-only">Use setting</span>
 											<span aria-hidden="true"
 												class="pointer-events-none inline-block h-6 w-6 transform rounded-full
 												bg-white shadow-lg ring-0 transition duration-500 ease-in-out
@@ -87,6 +104,8 @@ import Results from "./Results.vue";
 import Typers from "./Typers.vue";
 import AllTypings from "./AllTypings.vue";
 import {useStore} from "vuex";
+import { fcmTokenService } from '../service/fcm-token-service';
+import { requestService } from '../service/request-service';
 
 const props = defineProps({
 	openSidebar: Boolean
@@ -94,7 +113,8 @@ const props = defineProps({
 const emit = defineEmits(['changeView'])
 const open = ref(false)
 const store = useStore()
-const darkMode = ref(false)
+const darkMode = ref(localStorage.getItem('darkMode') === 'true')
+const notifications = ref(localStorage.getItem('notifications') === 'true')
 watchEffect(() => open.value = props.openSidebar)
 function changeView(page) {
 	open.value = false;
@@ -106,12 +126,22 @@ const loggedIn = computed(() => {
 const userCountry = computed( () => {
 	return loggedIn.value ? store.state.auth.user.country : ''
 })
+async function toggleNotifications() {
+	notifications.value = !notifications.value
+	if(notifications.value) {
+		fcmTokenService.getMessagingToken()
+	} else {
+		requestService.get('/delete-token')
+	}
+}
 function toggleDarkMode() {
 	darkMode.value = !darkMode.value
 	if(darkMode.value) {
 		document.documentElement.classList.add('dark')
+		localStorage.setItem('darkMode', 'true')
 	} else {
 		document.documentElement.classList.remove('dark')
+		localStorage.removeItem('darkMode')
 	}
 }
 </script>
