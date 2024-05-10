@@ -3,7 +3,7 @@
 		<div class="mx-auto px-2 sm:px-6 lg:px-8">
 			<div class="relative flex h-16 items-center">
 				<div class="absolute inset-y-0 left-0 flex items-center">
-					<button class="inline-flex items-center justify-center rounded-md p-2 text-white
+					<button v-if="loggedIn" class="inline-flex items-center justify-center rounded-md p-2 text-white
 						hover:ring-2 hover:ring-white" @click="open = true">
 						<span class="sr-only">Open main menu</span>
 						<Bars3Icon class="block h-6 w-6" aria-hidden="true" />
