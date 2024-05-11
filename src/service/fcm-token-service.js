@@ -10,7 +10,6 @@ class FcmTokenService {
       getToken(messaging, { vapidKey })
         .then((currentToken) => {
           if (currentToken) {
-            console.log('currentToken: ', currentToken)
             requestService.post('/update-token', { token: currentToken })
           } else {
             console.log('No registration token available. Request permission to generate one.')
