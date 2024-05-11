@@ -45,12 +45,9 @@
 												<a class="mx-auto py-2 text-lg">Profil</a>
 											</li>
 										</ul>
-										<div class="mt-2">
-											Twój kraj: {{ userCountry }}
-										</div>
 									</div>
-									<div class="ml-4 flex">
-										<span class="flex items-center">
+									<div class="ml-4 flex mb-4">
+										<span class="flex items-center mr-2">
 											Powiadomienia: 
 										</span>
 										<Switch
