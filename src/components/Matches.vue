@@ -5,25 +5,31 @@
 			class="text-center"/>
 	</div>
 	<form>
-		<div v-if="matches.length > 0" class="text-center text-xl">Mecze</div>
+		<div class="text-center text-xl">{{ initialMessage }}</div>
 		<div v-for="match in matches" :key="match.id"
-			class="flex justify-center items-center my-1">
-			<input type="checkbox" class="form-checkbox" v-model="match.chosen" :disabled="match.disabled"/>
-			<span class="text-center w-24">{{ match.homeTeam }}</span>
-			<input v-model="match.homeScore" v-show="!match.disabled" @input="match.chosen = true"
-			       type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
-			-
-			<input v-model="match.awayScore" v-show="!match.disabled" @input="match.chosen = true"
-			       type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
-			<span class="text-center w-24">{{ match.awayTeam }}</span>
-			<div>
-				<p>g. {{matchTime(match)}}</p>
-				<p v-show="match.disabled">pula: {{match.pool}}</p>
+			class="my-1">
+			<div class="flex justify-center">
+				<p class="mx-1">g. {{matchTime(match)}}</p>
+				<p class="mx-1" v-show="match.disabled">pula: {{match.pool}}</p>
+			</div>
+			<div class="flex items-center">
+				<span class="flex w-1/6 justify-center">
+					<input type="checkbox" class="form-checkbox" v-model="match.chosen" :disabled="match.disabled"/>
+				</span>
+				<div class="mx-2 w-4/6 flex justify-center items-center">
+					<span class="text-center w-24">{{ match.homeTeam }}</span>
+					<input v-model="match.homeScore" v-show="!match.disabled" @input="match.chosen = true"
+						   type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
+					-
+					<input v-model="match.awayScore" v-show="!match.disabled" @input="match.chosen = true"
+						   type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
+					<span class="text-center w-24">{{ match.awayTeam }}</span>
+				</div>
 			</div>
 		</div>
 		<div v-show="wrongTypings" class="text-center text-red-600 my-2">{{ wrongTypings }}</div>
 		<button @click.prevent="showSendTypingModal"
-			class="rounded flex mx-auto p-2 bg-dark text-light dark:bg-light dark:text-dark transition ease-in-out
+			class="rounded flex my-2 mx-auto p-2 bg-dark text-light dark:bg-light dark:text-dark transition ease-in-out
 					duration-500 hover:bg-light hover:text-dark dark:hover:bg-dark dark:hover:text-light">
 			Wyślij
 		</button>
@@ -49,6 +55,7 @@ const todayPool = ref('')
 const wrongTypings = ref('')
 const sentMatches = ref([])
 const sendTypingsModalOpened = ref(false)
+const initialMessage = ref('')
 
 const chosenMatches = computed(() => {
 	return matches.value.filter(match => match.chosen)
@@ -83,6 +90,11 @@ function getMatches() {
 	.then((response) => {
 		console.log('response from api: ', response.data)
 		matches.value = response.data.matches
+		if(matches.value.length > 0) {
+			initialMessage.value = 'Mecze'
+		} else {
+			initialMessage.value = 'Dzisiaj nie ma meczu :('
+		}
 		markPastMatches()
 		errorMessage.value = ''
 	})
@@ -130,6 +142,8 @@ function showSendTypingModal() {
 }
 
 watch(dateValue, () => {
+	matches.value = []
+	initialMessage.value = ''
 	if (isToday) {
 		getTodayPool()
 	}
