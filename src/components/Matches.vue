@@ -1,49 +1,47 @@
 <template>
-    <div class="text-2xl text-center" v-show="isToday">Dzisiejsza pula: {{todayPool}}</div>
+	<div class="text-2xl text-center" v-show="isToday">Dzisiejsza pula: {{ todayPool }}</div>
 	<div class="mx-auto my-2 w-fit">
-		<vue-tailwind-datepicker v-model="dateValue" as-single :formatter="formatter"
-			class="text-center"/>
+		<vue-tailwind-datepicker v-model="dateValue" as-single :formatter="formatter" class="text-center" />
 	</div>
 	<form>
 		<div class="text-center text-xl">{{ initialMessage }}</div>
-		<div v-for="match in matches" :key="match.id"
-			class="my-1">
+		<div v-for="match in matches" :key="match.id" class="my-1">
 			<div class="flex justify-center">
-				<p class="mx-1">g. {{matchTime(match)}}</p>
-				<p class="mx-1" v-show="match.disabled">pula: {{match.pool}}</p>
+				<p class="mx-1">g. {{ matchTime(match) }}</p>
+				<p class="mx-1" v-show="match.disabled">pula: {{ match.pool }}</p>
 			</div>
 			<div class="flex items-center">
 				<span class="flex w-1/6 justify-center">
-					<input type="checkbox" class="form-checkbox" v-model="match.chosen" :disabled="match.disabled"/>
+					<input type="checkbox" class="form-checkbox" v-model="match.chosen" v-show="!match.disabled" />
 				</span>
 				<div class="mx-2 w-4/6 flex justify-center items-center">
 					<span class="text-center w-24">{{ match.homeTeam }}</span>
-					<input v-model="match.homeScore" v-show="!match.disabled" @input="match.chosen = true"
-						   type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
+					<input v-model="match.homeScore" v-show="!match.disabled" @input="match.chosen = true" type="number"
+						class="form-input text-center mx-2 border border-dark rounded-md w-16" />
 					-
-					<input v-model="match.awayScore" v-show="!match.disabled" @input="match.chosen = true"
-						   type="number" class="form-input text-center mx-2 border border-dark rounded-md w-16"/>
+					<input v-model="match.awayScore" v-show="!match.disabled" @input="match.chosen = true" type="number"
+						class="form-input text-center mx-2 border border-dark rounded-md w-16" />
 					<span class="text-center w-24">{{ match.awayTeam }}</span>
 				</div>
 			</div>
 		</div>
 		<div v-show="wrongTypings" class="text-center text-red-600 my-2">{{ wrongTypings }}</div>
-		<button @click.prevent="showSendTypingModal"
-			class="rounded flex my-2 mx-auto p-2 bg-dark text-light dark:bg-light dark:text-dark transition ease-in-out
+		<button @click.prevent="showSendTypingModal" class="rounded flex my-2 mx-auto p-2 bg-dark text-light dark:bg-light dark:text-dark transition ease-in-out
 					duration-500 hover:bg-light hover:text-dark dark:hover:bg-dark dark:hover:text-light">
 			Wyślij
 		</button>
 	</form>
-	<SendTypingsModal :show-modal="sendTypingsModalOpened" :typings="sentMatches" @sendTypes='sendTypes'/>
+	<SendTypingsModal :show-modal="sendTypingsModalOpened" :typings="sentMatches" @sendTypes='sendTypes' />
 </template>
 
 <script setup>
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 import dayjs from 'dayjs'
-import {computed, onMounted, ref, watch} from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import SendTypingsModal from "@/components/SendTypingsModal.vue";
-import {requestService} from "@/service/request-service"
+import { requestService } from "@/service/request-service"
 
+const emit = defineEmits(['openSnackbar'])
 const dateValue = ref(dayjs().format('YYYY-MM-DD'))
 const formatter = {
 	date: 'YYYY-MM-DD',
@@ -63,6 +61,15 @@ const chosenMatches = computed(() => {
 
 function sendTypes() {
 	requestService.post('/matches/' + dateValue.value, sentMatches.value)
+		.then((response) => {
+			emit('openSnackbar', 'Pomyślnie wysłano typowania', true)
+			sendTypingsModalOpened.value = false
+		})
+		.catch((error) => {
+			console.log('error: ', error)
+			emit('openSnackbar', 'Wystąpił błąd podczas wysyłania typowań', false)
+			sendTypingsModalOpened.value = false
+		})
 }
 
 function markPastMatches() {
@@ -87,20 +94,20 @@ function parseDate(match) {
 
 function getMatches() {
 	requestService.get('/matches/' + dateValue.value)
-	.then((response) => {
-		console.log('response from api: ', response.data)
-		matches.value = response.data.matches
-		if(matches.value.length > 0) {
-			initialMessage.value = 'Mecze'
-		} else {
-			initialMessage.value = 'Dzisiaj nie ma meczu :('
-		}
-		markPastMatches()
-		errorMessage.value = ''
-	})
-	.catch((error) => {
-		errorMessage.value = error.message
-	})
+		.then((response) => {
+			console.log('response from api: ', response.data)
+			matches.value = response.data.matches
+			if (matches.value.length > 0) {
+				initialMessage.value = 'Mecze'
+			} else {
+				initialMessage.value = 'Dzisiaj nie ma meczu :('
+			}
+			markPastMatches()
+			errorMessage.value = ''
+		})
+		.catch((error) => {
+			errorMessage.value = error.message
+		})
 }
 
 const isToday = computed(() => {
@@ -113,19 +120,19 @@ const isToday = computed(() => {
 
 function getTodayPool() {
 	requestService.get('/today-pool')
-	.then((response) => {
-		todayPool.value = response.data + ' zł'
-	})
-	.catch((error) => {
-		todayPool.value = 'Nie udało się pobrać puli'
-	})
+		.then((response) => {
+			todayPool.value = response.data + ' zł'
+		})
+		.catch((error) => {
+			todayPool.value = 'Nie udało się pobrać puli'
+		})
 }
 
 function matchTime(match) {
-  function padTo2Digits(num) {
-    return String(num).padStart(2, '0')
-  }
- return padTo2Digits(match.startTime[0]) + ':' + padTo2Digits(match.startTime[1]);
+	function padTo2Digits(num) {
+		return String(num).padStart(2, '0')
+	}
+	return padTo2Digits(match.startTime[0]) + ':' + padTo2Digits(match.startTime[1]);
 }
 
 function showSendTypingModal() {
@@ -166,6 +173,7 @@ input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
 }
+
 /* Firefox */
 input[type=number] {
 	-moz-appearance: textfield;

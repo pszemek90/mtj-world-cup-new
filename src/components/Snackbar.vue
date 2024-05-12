@@ -8,15 +8,16 @@
     leave-from-class="translate-y-0"
     leave-to-class="translate-y-[-100%]"
   >
-    <div id="snackbar" v-if="open"
-      class="absolute w-full isolate flex items-center overflow-hidden bg-green-300 z-10 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
+    <div id="snackbar" v-if="show"
+      :class = "success ? 'bg-green-300' : 'bg-red-300'"
+      class="absolute w-full isolate flex items-center overflow-hidden z-10 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
         <p class="text-sm leading-6 text-gray-900">
           <slot/>
         </p>
       </div>
       <div class="flex flex-1 justify-end">
-        <button type="button" @click="openSnackbar = false" class="-m-3 p-3 focus-visible:outline-offset-[-4px]">
+        <button type="button" @click="show = false" class="-m-3 p-3 focus-visible:outline-offset-[-4px]">
           <span class="sr-only">Dismiss</span>
           <XMarkIcon class="h-6 w-6 text-gray-900"
             aria-hidden="true" />
@@ -30,14 +31,17 @@
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { watch, ref } from 'vue'
 const props = defineProps({
-  openSnackbar: Boolean
+  opened: Boolean,
+  success: Boolean
 })
-const open = ref(false)
-watch(() => props.openSnackbar, (value) => {
-  open.value = value
+const emit = defineEmits(['close-snackbar'])
+const show = ref(false)
+watch(() => props.opened, (value) => {
+  show.value = value
   if (value) {
     setTimeout(() => {
-      open.value = false
+      show.value = false
+      emit('close-snackbar')
     }, 5000)
   }
 })

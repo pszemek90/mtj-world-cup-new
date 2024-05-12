@@ -1,14 +1,14 @@
 <template>
   <div>
-    <Snackbar :open-snackbar="openSnackbar">
+    <Snackbar :opened="snackbarOpened" :success="snackbarSuccess" @close-snackbar="closeSnackbar">
       {{ snackbarMessage }}
     </Snackbar>
     <Navbar @open-login-modal="openLoginModal" @change-view="changeView" />
   </div>
   <div id="content-main" class="text-dark dark:text-light">
-    <component v-if="loggedIn" :is="currentView"></component>
+    <component v-if="loggedIn" :is="currentView" @open-snackbar="openSnackbarWithMessage"></component>
     <span class="login-message" v-else>Zaloguj się aby kontynuować</span>
-    <LoginModal :open-modal="open" @close-login-modal="closeLoginModal" @open-snackbar="openSnackbarWithMessage"/>
+    <LoginModal :open-modal="open" @close-login-modal="closeLoginModal" />
     <CountryModal :open-modal="openCountryModal" @close-country-modal="closeCountryModal" />
   </div>
 </template>
@@ -25,8 +25,9 @@ import { ref, computed, shallowRef } from 'vue';
 const open = ref(false);
 const currentView = shallowRef(Matches);
 const openCountryModal = ref(false);
-const openSnackbar = ref(false);
+const snackbarOpened = ref(false);
 const snackbarMessage = ref('');
+const snackbarSuccess = ref(true);
 
 const store = useUserStore();
 
@@ -34,9 +35,14 @@ const loggedIn = computed(() => {
   return store.user.isLoggedIn;
 })
 
-function openSnackbarWithMessage(message) {
+function openSnackbarWithMessage(message, success) {
   snackbarMessage.value = message;
-  openSnackbar.value = true;
+  snackbarSuccess.value = success;
+  snackbarOpened.value = true;
+}
+
+function closeSnackbar() {
+  snackbarOpened.value = false;
 }
 
 function openLoginModal() {
