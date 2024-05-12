@@ -54,15 +54,8 @@
 								</div>
 
 								<div class="flex items-center justify-between" v-show="!isNewPasswordChallenge">
-									<div class="flex items-center">
-										<input id="remember-me" name="remember-me" type="checkbox"
-											class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-										<label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember
-											me</label>
-									</div>
-
 									<div class="text-sm">
-										<button type="submit" @click.prevent="resetPassword(user)"
+										<button type="button" @click.prevent="resetPassword(user)"
 											class="font-medium text-indigo-600 hover:text-indigo-500">Nie pamiętam
 											hasła</button>
 									</div>
@@ -100,7 +93,7 @@ import { fcmTokenService } from '../service/fcm-token-service';
 const props = defineProps({
 	openModal: Boolean
 })
-const emit = defineEmits(['closeLoginModal', 'openSnackbar'])
+const emit = defineEmits(['closeLoginModal'])
 const open = ref(false)
 const isNewPasswordChallenge = ref(false)
 const isResetPassword = ref(false)
@@ -115,6 +108,7 @@ const authResponse = ref(null)
 const errors = ref([])
 
 async function handleLogin(user) {
+	errors.value = []
 	if (isNewPasswordChallenge.value) {
 		authService.respondToNewPasswordChallenge(authResponse.value, user.email, newPassword.value)
 			.then(async (response) => {
@@ -129,19 +123,20 @@ async function handleLogin(user) {
 	} else {
 		authService.login(user)
 			.then(async (response) => {
-				console.log('handle login response: ', response)
 				if (response.ChallengeName === 'NEW_PASSWORD_REQUIRED') {
 					isNewPasswordChallenge.value = true
 					authResponse.value = response
 				} else {
 					await logUser(user, response)
 					fcmTokenService.getMessagingToken()
-					emit('openSnackbar', 'Zalogowano')
 				}
 			})
 			.catch((error) => {
 				if (error.toString().includes('PasswordResetRequiredException')) {
 					isResetPassword.value = true
+				}
+				if (error.toString().includes('NotAuthorizedException')) {
+					errors.value.push('Nieprawidłowy email lub hasło')
 				}
 				console.log('error: ', error)
 			})
@@ -195,6 +190,7 @@ async function getUser(accessToken) {
 }
 
 function closeModal() {
+	errors.value = []
 	emit('closeLoginModal')
 }
 
