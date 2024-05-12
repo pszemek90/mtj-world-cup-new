@@ -18,9 +18,20 @@ messaging.onBackgroundMessage(function (payload) {
   // Customize notification here
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
-    body: payload.notification.body
+    body: payload.notification.body,
+    icon: 'android-chrome-192x192.png',
+    data: {
+      url: self.location.origin
+    }
   };
 
   self.registration.showNotification(notificationTitle,
     notificationOptions);
+});
+
+self.addEventListener('notificationclick', function (event) {
+  console.log("notificationclick", event)
+  var urlToRedirect = event.notification.data.url;
+  event.notification.close();
+  event.waitUntil(self.clients.openWindow(urlToRedirect));
 });
