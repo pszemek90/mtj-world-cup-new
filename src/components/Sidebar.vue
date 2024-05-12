@@ -107,7 +107,7 @@ import { requestService } from '../service/request-service';
 const props = defineProps({
 	openSidebar: Boolean
 })
-const emit = defineEmits(['changeView'])
+const emit = defineEmits(['changeView', 'close'])
 const open = ref(false)
 const store = useStore()
 const darkMode = ref(localStorage.getItem('darkMode') === 'true')
@@ -126,8 +126,10 @@ const userCountry = computed( () => {
 async function toggleNotifications() {
 	notifications.value = !notifications.value
 	if(notifications.value) {
+		localStorage.setItem('notifications', 'true')
 		fcmTokenService.getMessagingToken()
 	} else {
+		localStorage.removeItem('notifications')
 		requestService.get('/delete-token')
 	}
 }

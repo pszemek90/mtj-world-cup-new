@@ -4,7 +4,7 @@ import { requestService } from './request-service';
 
 class FcmTokenService {
   getMessagingToken() {
-    if (Notification.permission !== 'denied') {
+    if (Notification.permission !== 'denied' && localStorage.getItem('notifications') === 'true') {
       const messaging = getMessaging();
 
       getToken(messaging, { vapidKey })
