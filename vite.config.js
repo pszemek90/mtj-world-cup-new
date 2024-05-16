@@ -10,17 +10,24 @@ export default defineConfig({
       vue(),
       VitePWA({
         manifest: {
-        "short_name": "MTJ Katar 2022",
+        "short_name": "MTJ Euro 2024",
         "name": "",
         "icons":[
           {
             "src":"/android-chrome-192x192.png",
             "sizes":"192x192",
-            "type":"image/png"
+            "type":"image/png",
+            "purpose": "any"
           },{
             "src":"/android-chrome-512x512.png",
             "sizes":"512x512",
-            "type":"image/png"
+            "type":"image/png",
+            "purpose": "any"
+          }, {
+            "src": "/android-chrome-512x512-maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
           }],
         "start_url": "/",
         "display": "standalone",
