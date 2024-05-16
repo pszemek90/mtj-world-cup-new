@@ -174,6 +174,7 @@ async function setCurrentUser(user, response) {
 		email: user.email,
 		isLoggedIn: true,
 		idToken: response.AuthenticationResult.IdToken,
+		refreshToken: response.AuthenticationResult.RefreshToken,
 		username: username
 	}
 }

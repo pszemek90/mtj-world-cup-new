@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', () => {
         isLoggedIn: false,
         email: '',
         idToken: '',
+        refreshToken: '',
         username: 'nieznajomy'
     }
     const user = ref(initialUser || emptyUser)
@@ -20,14 +21,14 @@ export const useUserStore = defineStore('user', () => {
         user.value = emptyUser
     }
 
-    function test() {
-        console.log('test')
+    function updateToken(token) {
+        user.value.idToken = token
     }
 
     return {
         user,
-        test,
         login,
-        logout
+        logout,
+        updateToken
     }
 })

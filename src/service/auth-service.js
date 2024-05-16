@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
     CognitoIdentityProviderClient,
     InitiateAuthCommand,
@@ -73,6 +72,18 @@ class AuthService {
             Session: authResponse.Session
         }
         const command = new RespondToAuthChallengeCommand(input)
+        return client.send(command)
+    }
+
+    async refreshToken(refreshToken) {
+        const input = { // InitiateAuthRequest
+            AuthFlow: "REFRESH_TOKEN_AUTH", // required
+            AuthParameters: {
+                "REFRESH_TOKEN": refreshToken,
+            },
+            ClientId: clientId  // required
+        };
+        const command = new InitiateAuthCommand(input);
         return client.send(command)
     }
 }
