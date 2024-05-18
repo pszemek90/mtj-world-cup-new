@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [
       vue(),
       VitePWA({
+        registerType: 'autoUpdate',
         manifest: {
         "short_name": "MTJ Euro 2024",
         "name": "",
