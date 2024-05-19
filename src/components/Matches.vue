@@ -14,7 +14,7 @@
 				<span class="flex justify-center">
 					<input type="checkbox" class="form-checkbox" v-model="match.chosen" v-show="!match.disabled" />
 				</span>
-				<div class="mx-2 col-span-10 grid grid-cols-11 justify-center items-center">
+				<div :class="match.disabled ? 'grid-cols-7' : 'grid-cols-11'" class="mx-2 col-span-10 grid justify-center items-center">
 					<span class="text-center col-span-3">{{ match.homeTeam }}</span>
 					<input v-model="match.homeScore" v-show="!match.disabled" @input="match.chosen = true" type="number"
 						class="form-input text-center mx-2 border border-dark rounded-md col-span-2" />
