@@ -1,4 +1,5 @@
 <template>
+	<LoadingDropdown v-show="loading"/>
 	<div v-for="(typingsFromDate, key) in typings" :key="key" class="my-1">
 		<button @click="toggleTypings(typingsFromDate)"
 		        class="flex align-baseline my-auto m-2 border-2 border-dark dark:border-light max-w-fit rounded-lg p-1
@@ -36,18 +37,16 @@
 import {ref} from 'vue'
 import {ChevronRightIcon, ChevronDownIcon, QuestionMarkCircleIcon} from '@heroicons/vue/24/outline'
 import {CheckIcon, XMarkIcon, } from '@heroicons/vue/24/solid'
-import axios from "axios";
-import authHeader from "@/service/auth-header";
 import {onMounted} from "vue";
-import {useStore} from "vuex";
 import {requestService} from "@/service/request-service"
+import LoadingDropdown from './loading/LoadingDropdown.vue';
 
 const props = defineProps({
 	type: String
 })
 
-const store = useStore()
 const typings = ref(null)
+const loading = ref(true)
 
 function toggleTypings(typing) {
 	typing.isShown = !typing.isShown
@@ -56,21 +55,30 @@ function toggleTypings(typing) {
 function getTypingsForUser() {
 	requestService.get('/typings')
 	.then((response) => {
-		console.log('Typings returned: ', response.data)
+		loading.value = false
 		typings.value = response.data
+	})
+	.catch((error) => {
+		loading.value = false
+		console.error('Error while fetching typings: ', error)
 	})
 }
 
 function getFinishedMatches() {
 	requestService.get('/results')
 	.then((response) => {
-		console.log('Results returned: ', response.data)
+		loading.value = false
 		typings.value = response.data
+	})
+	.catch((error) => {
+		loading.value = false
+		console.error('Error while fetching results: ', error)
 	})
 }
 
 
 onMounted(async () => {
+	loading.value = true
 	if(props.type === 'typings'){
 		getTypingsForUser()
 	} else if (props.type === 'results') {

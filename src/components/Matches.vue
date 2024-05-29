@@ -3,6 +3,7 @@
 	<div class="mx-auto my-2 w-fit">
 		<vue-tailwind-datepicker v-model="dateValue" as-single :formatter="formatter" class="text-center" />
 	</div>
+	<LoadingMatches v-show="loading" />
 	<form>
 		<div class="text-center text-xl">{{ initialMessage }}</div>
 		<div v-for="match in matches" :key="match.id" class="my-1">
@@ -40,6 +41,7 @@ import dayjs from 'dayjs'
 import { computed, onMounted, ref, watch } from 'vue'
 import SendTypingsModal from "@/components/SendTypingsModal.vue";
 import { requestService } from "@/service/request-service"
+import LoadingMatches from './loading/LoadingMatches.vue';
 
 const emit = defineEmits(['openSnackbar'])
 const dateValue = ref(dayjs().format('YYYY-MM-DD'))
@@ -54,6 +56,7 @@ const wrongTypings = ref('')
 const sentMatches = ref([])
 const sendTypingsModalOpened = ref(false)
 const initialMessage = ref('')
+const loading = ref(true)
 
 const chosenMatches = computed(() => {
 	return matches.value.filter(match => match.chosen)
@@ -93,9 +96,10 @@ function parseDate(match) {
 }
 
 function getMatches() {
+	loading.value = true
 	requestService.get('/matches/' + dateValue.value)
 		.then((response) => {
-			console.log('response from api: ', response.data)
+			loading.value = false
 			matches.value = response.data.matches
 			if (matches.value.length > 0) {
 				initialMessage.value = 'Mecze'
@@ -106,6 +110,7 @@ function getMatches() {
 			errorMessage.value = ''
 		})
 		.catch((error) => {
+			loading.value = false
 			errorMessage.value = error.message
 		})
 }

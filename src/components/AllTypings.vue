@@ -1,4 +1,5 @@
 <template>
+	<LoadingDropdown v-show="loading"/>
 	<div v-for="(typingsFromDate, date) in typings" :key="date" class="my-1">
 		<button @click="toggleTypings(typingsFromDate)"
 		        class="flex align-baseline my-auto m-2 border-2 border-dark dark:border-light max-w-fit rounded-lg p-1
@@ -40,13 +41,20 @@ import {CheckIcon} from '@heroicons/vue/24/solid'
 import {ChevronRightIcon, ChevronDownIcon} from '@heroicons/vue/24/outline'
 import {onMounted, ref} from "vue";
 import {requestService} from "@/service/request-service";
+import LoadingDropdown from './loading/LoadingDropdown.vue';
 
 const typings = ref(null)
+const loading = ref(true)
 
 function getAllTypings() {
 	requestService.get('/all-typings')
 		.then((response) => {
+			loading.value = false;
 			typings.value = response.data;
+		})
+		.catch((error) => {
+			loading.value = false;
+			console.log('Error while fetching typings: ', error)
 		})
 }
 function toggleTypings(typing) {
