@@ -89,7 +89,8 @@ function markPastMatches() {
 }
 
 function parseDate(match) {
-	let matchDate = new Date(match.date);
+	let splitDate = dateValue.value.split('-')
+	let matchDate = new Date(splitDate[0], splitDate[1], splitDate[2]);
 	matchDate.setHours(match.startTime[0])
 	matchDate.setMinutes(match.startTime[1])
 	return matchDate.getTime()
