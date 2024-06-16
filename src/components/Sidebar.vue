@@ -16,7 +16,7 @@
 							<DialogPanel class="pointer-events-auto relative w-screen max-w-xs">
 								<div class="flex h-full flex-col bg-white dark:bg-gray-800 py-6 shadow-xl">
 									<div class="px-4 sm:px-6">
-										<DialogTitle class="text-lg border-b-2 font-medium">MTJ KATAR</DialogTitle>
+										<DialogTitle class="text-lg border-b-2 font-medium">MTJ EURO</DialogTitle>
 									</div>
 									<div class="relative mt-6 flex-1 px-4 sm:px-6">
 										<ul>
