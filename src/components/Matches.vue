@@ -9,7 +9,7 @@
 		<div v-for="match in matches" :key="match.id" class="my-1">
 			<div class="flex justify-center">
 				<p class="mx-1">g. {{ matchTime(match) }}</p>
-				<p class="mx-1" v-show="match.disabled">pula: {{ match.pool }}</p>
+				<p class="mx-1" v-show="match.disabled">pula: {{ match.pool || match.displayPool }}</p>
 			</div>
 			<div class="grid grid-cols-12 items-center">
 				<span class="flex justify-center">
